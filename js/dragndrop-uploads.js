@@ -100,6 +100,33 @@
         });
 
         /**
+         * Add handler for Browse button.
+         */
+        $('.droppable-browse-button', $droppable).click(function (event) {
+          event.preventDefault();
+
+          $droppable.DnD().$activeDroppable = $(this).closest('.droppable');
+          $('.droppable-standard-upload-hidden input', $element).click();
+
+          return false;
+        });
+
+        /**
+         * Attach the change event to the file input element to track and add
+         * to the droppable area files added by the Browse button.
+         */
+        $('.droppable-standard-upload-hidden input', $element).unbind('change').change(function (event) {
+          // Clone files array before clearing the input element.
+          var transFiles = $.extend({}, event.target.files);
+          // Clear the input element before adding files to the droppable area,
+          // because if auto uploading is enabled, files are sent twice - from
+          // the input element and the droppable area.
+          $(this).val('');
+
+          $droppable.DnD().addFiles($droppable.DnD().$activeDroppable, transFiles);
+        });
+
+        /**
          * Add custom error handling.
          */
         $droppable.unbind('dnd:showErrors').bind('dnd:showErrors', function (event, errors) {

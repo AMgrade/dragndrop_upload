@@ -138,13 +138,28 @@
 
     },
 
+    setProcessed: function (name) {
+      this.processed[name] = true;
+    },
+
+    isProcessed: function (name) {
+      this.processed[name] = true;
+    },
+
+    clearProcessed: function () {
+      var me = this;
+      $.each(me.processed, function (name) {
+        me.processed[name] = false;
+      });
+    },
+
     eventsList: {
       'dnd:send:form': function (event, form) {
         // Do not call the callback for every droppable area, call it just once.
-        if (this.processed[event.type]) {
+        if (this.isProcessed(event.type)) {
           return;
         }
-        this.processed[event.type] = true;
+        this.setProcessed(event.type);
 
         var settings = this.dnd.settings;
         var $formEl = $(settings.selector).closest('form');
@@ -188,10 +203,10 @@
 
       'dnd.send:beforeSend': function (event, xmlhttprequest, options) {
         // Do not call the callback for every droppable area, call it just once.
-        if (this.processed[event.type]) {
+        if (this.isProcessed(event.type)) {
           return;
         }
-        this.processed[event.type] = true;
+        this.setProcessed(event.type);
 
         var settings = this.dnd.settings;
         var ajax = Drupal.ajax[settings.uploadButton];
@@ -213,10 +228,10 @@
 
       'dnd:send:success': function (event, response, status) {
         // Do not call the callback for every droppable area, call it just once.
-        if (this.processed[event.type]) {
+        if (this.isProcessed(event.type)) {
           return;
         }
-        this.processed[event.type] = true;
+        this.setProcessed(event.type);
 
         var ajax = Drupal.ajax[this.dnd.settings.uploadButton];
 
@@ -225,29 +240,25 @@
 
       'dnd:send:complete': function (response, status) {
         // Do not call the callback for every droppable area, call it just once.
-        if (this.processed[event.type]) {
+        if (this.isProcessed(event.type)) {
           return;
         }
-        this.processed[event.type] = true;
+        this.setProcessed(event.type);
 
         var ajax = Drupal.ajax[this.dnd.settings.uploadButton];
 
         ajax.options.complete(response, status);
 
         // Clear the processed array after files have been sent.
-        this.processed = {};
-
-        this.processed[event.type] = false;
-        console.log(this.processed[event.type], "dnd:send:complete");
+        this.clearProcessed();
       },
 
       'dnd:send:options': function (event, options) {
-        console.log(this.processed[event.type], "dnd:send:options");
         // Do not call the callback for every droppable area, call it just once.
-        if (this.processed[event.type]) {
+        if (this.isProcessed(event.type)) {
           return;
         }
-        this.processed[event.type] = true;
+        this.setProcessed(event.type);
 
         var ajax = Drupal.ajax[this.dnd.settings.uploadButton];
 
@@ -260,10 +271,10 @@
 
       'dnd:showErrors': function (event, errors) {
         // Do not call the callback for every droppable area, call it just once.
-        if (this.processed[event.type]) {
+        if (this.isProcessed(event.type)) {
           return;
         }
-        this.processed[event.type] = true;
+        this.setProcessed(event.type);
 
         var settings = this.dnd.settings;
         var messages = [];

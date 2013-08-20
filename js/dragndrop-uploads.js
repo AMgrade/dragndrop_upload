@@ -34,6 +34,7 @@
       });
     },
 
+    // TODO: properly deal with detach.
     detach: function (context, settings) {
 //      $.each(settings.dragndropAPI, function (selector) {
 //        var $selector = $(selector);
@@ -57,6 +58,7 @@
     }
   };
 
+  // TODO: fix the handler.
   var browseButtonClick = function (event) {
     event.preventDefault();
 
@@ -66,6 +68,7 @@
     return false;
   };
 
+  // TODO: fix the handler.
   var fileInputChange = function (event) {
     // Clone files array before clearing the input element.
     var transFiles = $.extend({}, event.target.files);

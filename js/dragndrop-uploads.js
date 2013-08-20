@@ -11,14 +11,21 @@
         var $element = $selector.parent();
         var dnd = $selector.DnD();
 
-        if (!dnd) {
+        // Do not process if there is no DnD instance or the item is a mirror.
+        if (!dnd || settings.asMirrorFor) {
           return;
         }
 
         var $droppables = dnd.$droppables;
         var dndUploadsObj = new dndUploads(dnd);
 
-//        dndUploadsObj.addDroppable('#block-system-navigation');
+//        if ($('#block-system-navigation').not('.dropped')) {
+//          dndUploadsObj.addDroppable('#block-system-navigation');
+//
+//          $('#block-system-navigation').bind('dnd:send:complete', (function () {
+//            dndUploadsObj.removeDroppable($(this));
+//          }));
+//        }
 
         /**
          * Add handler for Browse button.
@@ -47,7 +54,56 @@
           $droppables.DnD().addFiles($droppables.DnD().$activeDroppable, transFiles);
         });
       });
-    }
+    }/*,
+
+    detach: function () {
+      $.each(settings.dragndropAPI, function (selector) {
+        var $selector = $(selector);
+        var dnd = $selector.DnD();
+
+        if (!dnd) {
+          return;
+        }
+
+        var $droppables = dnd.$droppables;
+        var dndUploadsObj = new dndUploads(dnd);
+
+//        if ($('#block-system-navigation').not('.dropped')) {
+//          dndUploadsObj.addDroppable('#block-system-navigation');
+//
+//          $('#block-system-navigation').bind('dnd:send:complete', (function () {
+//            dndUploadsObj.removeDroppable($(this));
+//          }));
+//        }
+
+        *//**
+         * Add handler for Browse button.
+         *//*
+        $('.droppable-browse-button', $droppables).click(function (event) {
+          event.preventDefault();
+
+          $droppables.DnD().$activeDroppable = $(this).closest('.droppable');
+          $('.droppable-standard-upload-hidden input', $element).click();
+
+          return false;
+        });
+
+        *//**
+         * Attach the change event to the file input element to track and add
+         * to the droppable area files added by the Browse button.
+         *//*
+        $('.droppable-standard-upload-hidden input', $element).unbind('change').change(function (event) {
+          // Clone files array before clearing the input element.
+          var transFiles = $.extend({}, event.target.files);
+          // Clear the input element before adding files to the droppable area,
+          // because if auto uploading is enabled, files are sent twice - from
+          // the input element and the droppable area.
+          $(this).val('');
+
+          $droppables.DnD().addFiles($droppables.DnD().$activeDroppable, transFiles);
+        });
+      });
+    }*/
   };
 
   var dndUploads = function (dnd) {
@@ -57,28 +113,59 @@
 
   dndUploads.prototype = {
     dnd: null,
+    processed: {},
 
+    /**
+     * Attach events to the given droppable areas.
+     *
+     * @param {jQuery} $droppables
+     */
     attachEvents: function ($droppables) {
       var callbacks = this.eventCallbacks;
 
-      $droppables.bind('dnd:send:form', callbacks.dndSendForm.bind(this.dnd));
+      $droppables.bind('dnd:send:form', callbacks.dndSendForm.bind(this));
 
-      $droppables.bind('dnd.send:beforeSend', callbacks.dndSendBeforeSend.bind(this.dnd));
+      $droppables.bind('dnd.send:beforeSend', callbacks.dndSendBeforeSend.bind(this));
 
-      $droppables.bind('dnd:send:success', callbacks.dndSendSuccess.bind(this.dnd));
+      $droppables.bind('dnd:send:success', callbacks.dndSendSuccess.bind(this));
 
-      $droppables.bind('dnd:send:complete', callbacks.dndSendComplete.bind(this.dnd));
+      $droppables.bind('dnd:send:complete', callbacks.dndSendComplete.bind(this));
 
-      $droppables.bind('dnd:send:options', callbacks.dndSendOptions.bind(this.dnd));
+      $droppables.bind('dnd:send:options', callbacks.dndSendOptions.bind(this));
 
-      $droppables.bind('dnd:addFiles:finished', callbacks.dndAddFilesFinished.bind(this.dnd));
+      $droppables.bind('dnd:addFiles:finished', callbacks.dndAddFilesFinished.bind(this));
 
-      /**
-       * Add custom error handling.
-       */
-      $droppables.unbind('dnd:showErrors').bind('dnd:showErrors', callbacks.dndShowErrors.bind(this.dnd));
+      $droppables.unbind('dnd:showErrors').bind('dnd:showErrors', callbacks.dndShowErrors.bind(this));
     },
 
+    /**
+     * Detach events from the given droppable areas.
+     *
+     * @param {jQuery} $droppables
+     */
+    detachEvents: function ($droppables) {
+      var callbacks = this.eventCallbacks;
+
+      $droppables.unbind('dnd:send:form', callbacks.dndSendForm.bind(this));
+
+      $droppables.unbind('dnd.send:beforeSend', callbacks.dndSendBeforeSend.bind(this));
+
+      $droppables.unbind('dnd:send:success', callbacks.dndSendSuccess.bind(this));
+
+      $droppables.unbind('dnd:send:complete', callbacks.dndSendComplete.bind(this));
+
+      $droppables.unbind('dnd:send:options', callbacks.dndSendOptions.bind(this));
+
+      $droppables.unbind('dnd:addFiles:finished', callbacks.dndAddFilesFinished.bind(this));
+
+      $droppables.unbind('dnd:showErrors', callbacks.dndShowErrors.bind(this));
+    },
+
+    /**
+     * Add droppable zone.
+     *
+     * @param {string|jQuery} droppable
+     */
     addDroppable: function (droppable) {
       var $droppable = $(droppable);
       this.dnd.addDroppable($droppable);
@@ -86,9 +173,27 @@
       this.attachEvents($droppable);
     },
 
+    /**
+     * Remove droppable zone.
+     *
+     * @param {string|jQuery} droppable
+     */
+    removeDroppable: function (droppable) {
+      var $droppable = $(droppable);
+      this.dnd.removeDroppable($droppable);
+
+      this.detachEvents($droppable);
+    },
+
     eventCallbacks: {
       dndSendForm: function (event, form) {
-        var settings = this.settings;
+        // Do not call the callback for every droppable area, call it just once.
+        if (this.processed[event.type]) {
+          return;
+        }
+        this.processed[event.type] = true;
+
+        var settings = this.dnd.settings;
         var $formEl = $(settings.selector).closest('form');
 
         // Add all input elements to the FormData.
@@ -129,7 +234,13 @@
       },
 
       dndSendBeforeSend: function (event, xmlhttprequest, options) {
-        var settings = this.settings;
+        // Do not call the callback for every droppable area, call it just once.
+        if (this.processed[event.type]) {
+          return;
+        }
+        this.processed[event.type] = true;
+
+        var settings = this.dnd.settings;
         var ajax = Drupal.ajax[settings.uploadButton];
 
         // Allow detaching behaviors to update field values before collecting them.
@@ -148,29 +259,56 @@
       },
 
       dndSendSuccess: function (event, response, status) {
-        var ajax = Drupal.ajax[this.settings.uploadButton];
+        // Do not call the callback for every droppable area, call it just once.
+        if (this.processed[event.type]) {
+          return;
+        }
+        this.processed[event.type] = true;
+
+        var ajax = Drupal.ajax[this.dnd.settings.uploadButton];
 
         ajax.options.success(response, status);
       },
 
       dndSendComplete: function (event, response, status) {
-        var ajax = Drupal.ajax[this.settings.uploadButton];
+        // Do not call the callback for every droppable area, call it just once.
+        if (this.processed[event.type]) {
+          return;
+        }
+        this.processed[event.type] = true;
+
+        var ajax = Drupal.ajax[this.dnd.settings.uploadButton];
 
         ajax.options.complete(response, status);
+
+        // Clear the processed array after files have been sent.
+        this.processed = {};
       },
 
       dndSendOptions: function (event, options) {
-        var ajax = Drupal.ajax[this.settings.uploadButton];
+        // Do not call the callback for every droppable area, call it just once.
+        if (this.processed[event.type]) {
+          return;
+        }
+        this.processed[event.type] = true;
+
+        var ajax = Drupal.ajax[this.dnd.settings.uploadButton];
 
         options.url = ajax.url;
       },
 
       dndAddFilesFinished: function (event) {
-        this.send();
+        this.dnd.send();
       },
 
       dndShowErrors: function (event, errors) {
-        var settings = this.settings;
+        // Do not call the callback for every droppable area, call it just once.
+        if (this.processed[event.type]) {
+          return;
+        }
+        this.processed[event.type] = true;
+
+        var settings = this.dnd.settings;
         var messages = [];
 
         // Go through the errors array and create human-readable messages.
@@ -181,6 +319,7 @@
           messages.push(Drupal.t(settings.errorsInfo[error.type], error.args));
         });
 
+        var $element = $(settings.selector).parent();
         $('>.messages.error', $element).remove();
         $element.prepend('<div class="messages error file-upload-js-error">' + messages + '</div>');
       }

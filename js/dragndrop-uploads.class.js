@@ -11,13 +11,13 @@
  *
  * @param {DnD} dnd
  */
-var dndUploads = function (dnd) {
+var DnDUploads = function (dnd) {
   this.dnd = dnd;
   this.attachEvents(dnd.$droppables);
 };
 
 (function ($) {
-  dndUploads.prototype = {
+  DnDUploads.prototype = {
     dnd: null,
     processed: {},
 

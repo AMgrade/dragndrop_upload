@@ -6,47 +6,46 @@
 (function ($) {
   Drupal.behaviors.dragndropUploads = {
     attach: function () {
-      $.each(Drupal.settings.dragndropAPI, function (selector, settings) {
+      $.each(Drupal.settings.dragndropUploads, function (i, selector) {
         $(selector).once('dnd-uploads', function () {
           var $this = $(this);
-          var $element = $this.parent();
           var dnd = $this.DnD();
 
           // Do not process if there is no DnD instance or the item is a mirror.
-          if (!dnd || settings.asMirrorFor) {
+          if (!dnd) {
             return;
           }
 
-          var $droppables = dnd.$droppables;
-          $droppables.data('dndUploads', new dndUploads(dnd));
+          var settings = dnd.settings;
+          dnd.$droppables.data('DnDUploads', new DnDUploads(dnd));
 
           /**
            * Add handler for Browse button.
            */
-          $('.droppable-browse-button', $droppables).bind('click', browseButtonClick.bind(this));
+          $(settings.browseButton).bind('click', browseButtonClick.bind(this));
 
           /**
            * Attach the change event to the file input element to track and add
            * to the droppable area files added by the Browse button.
            */
-          $('.droppable-standard-upload-hidden input', $element).unbind('change').bind('change', fileInputChange.bind(this));
+          $('input[name="'+ settings.name +'"]').unbind('change').bind('change', fileInputChange.bind(this));
         });
       });
     },
 
     detach: function (context, settings) {
-      $.each(settings.dragndropAPI, function (selector) {
+      $.each(Drupal.settings.dragndropUploads, function (selector) {
         var $selector = $(selector);
         var dnd = $selector.DnD();
 
-        if (!dnd || settings.asMirrorFor) {
+        if (!dnd) {
           return;
         }
 
-        var $droppables = dnd.$droppables;
+        var settings = dnd.settings;
 
-        $('.droppable-browse-button', $droppables).unbind('click', browseButtonClick);
-        $('.droppable-standard-upload-hidden input', $element).unbind('change', fileInputChange);
+        $(settings.browseButton).unbind('click', browseButtonClick);
+        $('input[name="' + settings.name + '"]').unbind('change', fileInputChange);
       });
     }
   };

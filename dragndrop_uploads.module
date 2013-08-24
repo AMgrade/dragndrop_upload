@@ -146,7 +146,17 @@ function dragndrop_uploads_element_pre_render($element) {
         'extensions' => $file_validate_extensions,
       ),
       'uploadButton' => $element['upload_button']['#id'],
+      'browseButton' => ':parent .droppable-browse-button',
       'errorsInfo' => $element['#errors_info'],
+    ),
+  );
+
+  $element['#attached']['js'][] = array(
+    'type' => 'setting',
+    'data' => array(
+      'dragndropUploads' => array(
+        '#' . $element['droppable_area']['#dnd_id'],
+      ),
     ),
   );
 

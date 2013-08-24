@@ -250,15 +250,20 @@ var DnDUploads = function (dnd) {
         options.url = ajax.url;
       },
 
+      /**
+       * Event callback for the 'dnd:addFiles:finished'.
+       *
+       * @param event
+       */
       'dnd:addFiles:finished': function (event) {
         this.dnd.send();
       },
 
       /**
-       * Set custom error callback.
+       * Error callback.
        *
        * @param event
-       * @param errors
+       * @param {Array} errors
        */
       'dnd:showErrors': function (event, errors) {
         // Do not call the callback for every droppable area, call it just once.

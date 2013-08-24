@@ -256,7 +256,9 @@ var DnDUploads = function (dnd) {
        * @param event
        */
       'dnd:addFiles:finished': function (event) {
-        this.dnd.send();
+        if (this.dnd.settings.uploadEvent == 'auto') {
+          this.dnd.send();
+        }
       },
 
       /**

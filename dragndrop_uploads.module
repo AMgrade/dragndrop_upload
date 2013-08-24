@@ -67,7 +67,7 @@ function dragndrop_uploads_element_info() {
     '#extended' => FALSE,
     '#attached' => array(
       'css' => array(
-        $path . '/css/dragndrop-upload-widget.css',
+        $path . '/css/dragndrop-uploads.css',
         $file_path . '/file.css',
       ),
       'js' => array(
@@ -84,10 +84,9 @@ function dragndrop_uploads_element_info() {
         $file_path . '/file.js',
       ),
     ),
-    '#upload_event' => 'manual',
+    '#upload_event' => 'auto',
     '#upload_button_text' => t('Upload'),
     '#droppable_area_text' => t('Drop files here to upload'),
-    '#preview_image_style' => 'thumbnail',
     // This setting is responsive for showing Browse button or not.
     '#standard_upload' => 1,
     '#cardinality' => 1,
@@ -148,6 +147,7 @@ function dragndrop_uploads_element_pre_render($element) {
       'uploadButton' => $element['upload_button']['#id'],
       'browseButton' => ':parent .droppable-browse-button',
       'errorsInfo' => $element['#errors_info'],
+      'uploadEvent' => $element['#upload_event'],
     ),
   );
 

@@ -72,9 +72,14 @@ function dragndrop_uploads_element_info() {
       ),
       'js' => array(
         array(
+          'data' => $path . '/js/dragndrop-uploads.class.js',
+          'type' => 'file',
+          'weight' => 5.1,
+        ),
+        array(
           'data' => $path . '/js/dragndrop-uploads.js',
           'type' => 'file',
-          'weight' => 5,
+          'weight' => 5.2,
         ),
         $file_path . '/file.js',
       ),

@@ -23,52 +23,52 @@
           /**
            * Add handler for Browse button.
            */
-          $('.droppable-browse-button', $droppables).bind('click', browseButtonClick);
+          $('.droppable-browse-button', $droppables).bind('click', browseButtonClick.bind(this));
 
           /**
            * Attach the change event to the file input element to track and add
            * to the droppable area files added by the Browse button.
            */
-          $('.droppable-standard-upload-hidden input', $element).unbind('change').bind('change', fileInputChange);
+          $('.droppable-standard-upload-hidden input', $element).unbind('change').bind('change', fileInputChange.bind(this));
         });
       });
     },
 
-    // TODO: properly deal with detach.
     detach: function (context, settings) {
-//      $.each(settings.dragndropAPI, function (selector) {
-//        var $selector = $(selector);
-//        var dnd = $selector.DnD();
-//
-//        if (!dnd || settings.asMirrorFor) {
-//          return;
-//        }
-//        console.log(0, "0");
-//
-//
-//        var $droppables = dnd.$droppables;
-//        var dndUploadsObj = $droppables.data('dndUploads');
-//        if (dndUploadsObj) {
-//          dndUploadsObj.detachEvents();
-//        }
-//
-//        $('.droppable-browse-button', $droppables).unbind('click', browseButtonClick);
-//        $('.droppable-standard-upload-hidden input', $element).unbind('change', fileInputChange);
-//      });
+      $.each(settings.dragndropAPI, function (selector) {
+        var $selector = $(selector);
+        var dnd = $selector.DnD();
+
+        if (!dnd || settings.asMirrorFor) {
+          return;
+        }
+
+        var $droppables = dnd.$droppables;
+
+        $('.droppable-browse-button', $droppables).unbind('click', browseButtonClick);
+        $('.droppable-standard-upload-hidden input', $element).unbind('change', fileInputChange);
+      });
     }
   };
 
-  // TODO: fix the handler.
+  /**
+   * Event callback for the Browse button.
+   */
   var browseButtonClick = function (event) {
     event.preventDefault();
 
-    $droppables.DnD().$activeDroppable = $(this).closest('.droppable');
+    var $this = $(this);
+    var $element = $this.parent();
+    var dnd = $this.DnD();
+    dnd.$droppables.DnD().$activeDroppable = $this;
     $('.droppable-standard-upload-hidden input', $element).click();
 
     return false;
   };
 
-  // TODO: fix the handler.
+  /**
+   * Event callback for the file input element to handle uploading.
+   */
   var fileInputChange = function (event) {
     // Clone files array before clearing the input element.
     var transFiles = $.extend({}, event.target.files);
@@ -77,7 +77,10 @@
     // the input element and the droppable area.
     $(this).val('');
 
-    $droppables.DnD().addFiles($droppables.DnD().$activeDroppable, transFiles);
+    var $this = $(this);
+    var dnd = $this.DnD();
+
+    dnd.$droppables.DnD().addFiles(dnd.$droppables.DnD().$activeDroppable, transFiles);
   };
 
   var dndUploads = function (dnd) {

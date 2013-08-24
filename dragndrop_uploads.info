@@ -3,3 +3,5 @@ description = Provides widgets for drag & drop uploads
 
 core = 7.x
 package = Media
+
+dependencies[] = dragndrop_api

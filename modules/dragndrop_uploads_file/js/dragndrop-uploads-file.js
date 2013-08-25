@@ -89,7 +89,19 @@
       $droppable.bind('dnd:createPreview', createPreview);
 
       var removePreview = function (event, dndFile) {
-        dndFile.$preview.remove();
+        /**
+         * Do not remove preview while sending files, instead remove it when
+         * the sending is finished in order not to confuse user.
+         */
+        if ($droppable.DnD().sending) {
+          dndFile.$droppable.one('dnd:send:complete', function () {
+            dndFile.$preview.remove();
+          });
+        }
+        // Otherwise, just remove preview.
+        else {
+          dndFile.$preview.remove();
+        }
       };
       $droppable.bind('dnd:removePreview', removePreview);
     }

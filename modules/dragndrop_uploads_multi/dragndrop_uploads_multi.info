@@ -1,0 +1,7 @@
+name = Drag & Drop Uploads: Multiupload support
+description = Provides a multiupload functionality for the Drag & Drop Uploads widgets
+
+core = 7.x
+package = Media
+
+dependencies[] = multiupload_filefield_widget

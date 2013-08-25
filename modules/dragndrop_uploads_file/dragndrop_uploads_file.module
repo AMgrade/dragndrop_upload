@@ -116,10 +116,10 @@ function dragndrop_uploads_file_field_widget_settings_form($field, $instance) {
     '#description' => t(
       'Allow multiple files to be uploaded at once. '
     ),
-    '#default_value' => module_exists('dragndrop_uploads_file_multi') ? $settings['multiupload'] : 0,
+    '#default_value' => module_exists('dragndrop_uploads_multi') ? $settings['multiupload'] : 0,
   );
 
-  if (module_exists('dragndrop_uploads_file_multi')) {
+  if (module_exists('dragndrop_uploads_multi')) {
     $_fieldset['multiupload'] += array(
       '#states' => array(
         'disabled' => array(
@@ -171,6 +171,10 @@ function dragndrop_uploads_file_field_widget_form(&$form, &$form_state, $field, 
   $instance_settings = $instance['settings'];
 
   $element_info = element_info('dragndrop_upload');
+  $pre_render = array_merge(
+    $element_info['#pre_render'],
+    array('dragndrop_uploads_file_pre_render')
+  );
   $element += array(
     '#type' => 'dragndrop_upload',
     '#upload_location' => file_field_widget_uri($field, $instance),
@@ -183,10 +187,7 @@ function dragndrop_uploads_file_field_widget_form(&$form, &$form_state, $field, 
       $element_info['#process'],
       array('file_field_widget_process')
     ),
-    '#pre_render' => array_merge(
-        $element_info['#pre_render'],
-        array('dragndrop_uploads_file_pre_render')
-    ),
+    '#pre_render' => $pre_render,
     '#progress_indicator' => $widget_settings['progress_indicator'],
     '#upload_event' => $widget_settings['upload_event'],
     '#standard_upload' => $widget_settings['standard_upload'],
@@ -202,9 +203,9 @@ function dragndrop_uploads_file_field_widget_form(&$form, &$form_state, $field, 
     '#extended' => TRUE,
   );
 
-//  if ($field['cardinality'] != 1) {
-//    $element['#pre_render'] = array('dragndrop_uploads_file_pre_render');
-//  }
+  if ($field['cardinality'] != 1) {
+    $element['#pre_render'] = array('dragndrop_uploads_pre_render');
+  }
 
   // If there are multiple values, add an element for each existing one.
   $_count_items = count($items);
@@ -234,7 +235,10 @@ function dragndrop_uploads_file_field_widget_form(&$form, &$form_state, $field, 
     $elements['#theme'] = 'file_widget_multiple';
     $elements['#theme_wrappers'] = array('fieldset');
     $elements['#process'] = array('file_field_widget_process_multiple');
-    $elements['#pre_render'] = array('dragndrop_uploads_file_widget_pre_render_multiple');
+    $elements[$delta]['#pre_render'] = $pre_render;
+    if ($field['cardinality'] != -1) {
+      $elements[$delta]['#cardinality'] -= $delta;
+    }
 
     $elements['#title'] = $element['#title'];
     $elements['#description'] = $element['#description'];
@@ -267,66 +271,3 @@ function dragndrop_uploads_file_field_widget_form(&$form, &$form_state, $field, 
 
   return $elements;
 }
-
-/**
- * Pre render callback for a multiple-value widget.
- */
-function dragndrop_uploads_file_widget_pre_render_multiple($element) {
-  if (!empty($element[$element['#file_upload_delta']])) {
-    $item =& $element[$element['#file_upload_delta']];
-    $id = $element['#id'] . '-ajax-wrapper';
-    $file_validate_extensions = array();
-    if (!empty($item['#upload_validators']['file_validate_extensions'])) {
-      $file_validate_extensions = preg_split(
-        '/ +/',
-        implode(' ', $item['#upload_validators']['file_validate_extensions'])
-      );
-    }
-
-    // Calculate the cardinality for a droppable area.
-    // It can't be greater than the field cardinality, so substract the already
-    // uploaded files number from the field cardinality.
-    $cardinality = 1;
-    if ($item['#multiupload']) {
-      $cardinality = $item['#cardinality'];
-      // If cardinality is unlimited, don't substract the uploaded files number.
-      if ($cardinality != -1) {
-        $cardinality -= $element['#file_upload_delta'];
-      }
-    }
-
-//    $setting = array(
-//      'dragndrop_upload' => array(
-//        $id => array(
-//          // It's not a simple field cardinality, but a cardinality for a
-//          // droppable area.
-//          'cardinality' => $cardinality,
-//          'file_upload_max_size' => parse_size(
-//            $item['#file_upload_max_size']
-//          ),
-//          'file_validate_extensions' => $file_validate_extensions,
-//          'standard_upload' => $item['#standard_upload'],
-//          'event' => $item['#upload_event'],
-//          'name' => $item['upload']['#name'],
-//          'upload_button' => $item['upload_button']['#id'],
-//          'remove_button' => $item['remove_button']['#id'],
-//        ),
-//      ),
-//    );
-//
-//    $element['#attached']['js'][] = array(
-//      'data' => &$setting,
-//      'type' => 'setting',
-//    );
-
-    $item['droppable_area']['upload_button'] = $item['upload_button'];
-    $item['droppable_area']['remove_button'] = $item['remove_button'];
-    // Hide buttons because we assume that they are rendered in the droppable
-    // area template.
-    hide($item['upload_button']);
-    hide($item['remove_button']);
-  }
-
-  return $element;
-}
-

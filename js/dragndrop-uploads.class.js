@@ -166,7 +166,7 @@ var DnDUploads = function (dnd) {
        * @param options
        * @returns {*}
        */
-      'dnd.send:beforeSend': function (event, xmlhttprequest, options) {
+      'dnd:send:beforeSend': function (event, xmlhttprequest, options) {
         // Do not call the callback for every droppable area, call it just once.
         if (this.isProcessed(event.type)) {
           return;
@@ -191,15 +191,13 @@ var DnDUploads = function (dnd) {
         return ajax.beforeSend(xmlhttprequest, options);
       },
 
-
       /**
        * Execute Drupal ajax.success().
        *
-       * @param event
        * @param response
        * @param status
        */
-      'dnd:send:success': function (event, response, status) {
+      'dnd:send:success': function (response, status) {
         // Do not call the callback for every droppable area, call it just once.
         if (this.isProcessed(event.type)) {
           return;
@@ -251,11 +249,22 @@ var DnDUploads = function (dnd) {
       },
 
       /**
-       * Event callback for the 'dnd:addFiles:finished'.
+       * Event callback for the 'dnd:addFiles:before' event.
+       *
+       * Removes old error messages.
+       */
+      'dnd:addFiles:before': function () {
+        var settings = this.dnd.settings;
+        var $element = $(settings.selector).parent();
+        $('>.messages.error', $element).remove();
+      },
+
+      /**
+       * Event callback for the 'dnd:addFiles:after' event.
        *
        * @param event
        */
-      'dnd:addFiles:finished': function (event) {
+      'dnd:addFiles:after': function (event) {
         if (this.dnd.settings.uploadEvent == 'auto') {
           this.dnd.send();
         }

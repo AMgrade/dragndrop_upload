@@ -27,7 +27,10 @@
           // Upload or Remove button for any action to be taken).
           if (settings.uploadEvent == 'manual') {
             $droppable.bind('dnd:send:complete, dnd:removeFile:empty', function () {
-              $uploadButton.hide();
+              if (!$(this).DnD().sending) {
+                $uploadButton.hide();
+                $droppableMsg.show();
+              }
             });
 
             $uploadButton.unbind('mousedown').bind('mousedown', function (event) {
@@ -39,11 +42,7 @@
             });
           }
 
-          $droppable.bind('dnd:removeFile:empty', function () {
-            $droppableMsg.show();
-          });
-
-          $droppable.bind('dnd:addFiles:finished', function () {
+          $droppable.bind('dnd:addFiles:after', function () {
             // Hide preview message if files number has reached the cardinality.
             if (settings.cardinality != -1 && settings.cardinality <= $droppable.DnD().getFilesList().length) {
               $droppableMsg.hide();

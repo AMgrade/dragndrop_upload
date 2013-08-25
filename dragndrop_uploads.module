@@ -204,7 +204,7 @@ function dragndrop_uploads_pre_render($element) {
 function dragndrop_uploads_errors_info() {
   $errors = array(
     'fileSize' => t('The selected file %filename cannot be uploaded, because it exceeds the maximum file size for uploading.'),
-    'filesNum' => t('Too many files. Maximum allowed number (%allowed) of files is exceeded.'),
+    'filesNum' => t('The selected file %filename cannot be uploaded. Maximum allowed number (%allowed) of files is exceeded.'),
     'fileExt' => t('The selected file %filename cannot be uploaded. Only files with the following extensions are allowed: %allowed.'),
     'unknown' => t('Unknown error type'),
   );

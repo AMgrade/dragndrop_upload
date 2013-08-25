@@ -296,7 +296,7 @@ var DnDUploads = function (dnd) {
 
         var $element = $(settings.selector).parent();
         $('>.messages.error', $element).remove();
-        $element.prepend('<div class="messages error file-upload-js-error">' + messages + '</div>');
+        $element.prepend('<div class="messages error file-upload-js-error">' + messages.join('<br/>') + '</div>');
       },
 
       /**

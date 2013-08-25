@@ -59,7 +59,12 @@
     attachPreviewers: function ($droppable) {
       var $previewCnt = $('.droppable-preview', $droppable);
 
-      // Define a preview callback for a file.
+      /**
+       * Create preview callback.
+       *
+       * @param event
+       * @param dndFile
+       */
       var createPreview = function (event, dndFile) {
         var fileSize = dndFile.file.size;
         var sizes = [Drupal.t('@size B'), Drupal.t('@size KB'), Drupal.t('@size MB'), Drupal.t('@size GB')];
@@ -88,6 +93,12 @@
       };
       $droppable.bind('dnd:createPreview', createPreview);
 
+      /**
+       * Remove preview callback.
+       *
+       * @param event
+       * @param dndFile
+       */
       var removePreview = function (event, dndFile) {
         /**
          * Do not remove preview while sending files, instead remove it when

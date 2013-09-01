@@ -72,9 +72,14 @@ function dragndrop_uploads_element_info() {
       ),
       'js' => array(
         array(
+          'data' => $path . '/js/dragndrop-uploads.abstract.js',
+          'type' => 'file',
+          'weight' => 5.11,
+        ),
+        array(
           'data' => $path . '/js/dragndrop-uploads.class.js',
           'type' => 'file',
-          'weight' => 5.1,
+          'weight' => 5.12,
         ),
         array(
           'data' => $path . '/js/dragndrop-uploads.js',
@@ -91,7 +96,7 @@ function dragndrop_uploads_element_info() {
     '#standard_upload' => 1,
     '#cardinality' => 1,
     '#file_upload_max_size' => file_upload_max_size(),
-    '#multiupload' => false,
+    '#multiupload' => FALSE,
     '#errors_info' => dragndrop_uploads_errors_info()
   );
 
@@ -104,10 +109,10 @@ function dragndrop_uploads_element_info() {
 function dragndrop_uploads_element_process($element, &$form_state, $form) {
   $element['upload_button']['#value'] = $element['#upload_button_text'];
   $dnd_id = 'droppable-' . str_replace(
-    array('[', ']', '_'),
-    array('-', '', '-'),
-    $element['#name']
-  );
+      array('[', ']', '_'),
+      array('-', '', '-'),
+      $element['#name']
+    );
   $element['droppable_area'] = array(
     '#theme' => 'dnd_upload_widget_droppable_area',
     '#text' => $element['#droppable_area_text'],
@@ -124,19 +129,24 @@ function dragndrop_uploads_element_process($element, &$form_state, $form) {
  * Pre render callback to add JS settings for the element.
  */
 function dragndrop_uploads_element_pre_render($element) {
-    $file_validate_extensions = '';
-    if (!empty($element['#upload_validators']['file_validate_extensions'])) {
-      $file_validate_extensions = preg_split(
-        '/ +/',
-        implode(
-          ' ',
-          $element['#upload_validators']['file_validate_extensions']
-        )
-      );
-    }
+  if (isset($element['droppable_area']['#access']) && !$element['droppable_area']['#access']) {
+    return $element;
+  }
 
+  $file_validate_extensions = '';
+  if (!empty($element['#upload_validators']['file_validate_extensions'])) {
+    $file_validate_extensions = preg_split(
+      '/ +/',
+      implode(
+        ' ',
+        $element['#upload_validators']['file_validate_extensions']
+      )
+    );
+  }
+
+  $selector = '#' . $element['droppable_area']['#dnd_id'];
   $element['#attached']['dragndrop_api'][] = array(
-    'selector' => '#' . $element['droppable_area']['#dnd_id'],
+    'selector' => $selector,
     'settings' => array(
       'name' => $element['upload']['#name'],
       'cardinality' => $element['#multiupload'] ? $element['#cardinality'] : 1,
@@ -145,7 +155,7 @@ function dragndrop_uploads_element_pre_render($element) {
         'extensions' => $file_validate_extensions,
       ),
       'uploadButton' => $element['upload_button']['#id'],
-      'browseButton' => ':parent .droppable-browse-button',
+      'browseButton' => $selector . ':parent .droppable-browse-button',
       'errorsInfo' => $element['#errors_info'],
       'uploadEvent' => $element['#upload_event'],
     ),
@@ -155,7 +165,7 @@ function dragndrop_uploads_element_pre_render($element) {
     'type' => 'setting',
     'data' => array(
       'dragndropUploads' => array(
-        '#' . $element['droppable_area']['#dnd_id'],
+        '#' . $element['droppable_area']['#dnd_id'] => TRUE,
       ),
     ),
   );
@@ -203,9 +213,12 @@ function dragndrop_uploads_pre_render($element) {
  */
 function dragndrop_uploads_errors_info() {
   $errors = array(
-    'fileSize' => t('The selected file %filename cannot be uploaded, because it exceeds the maximum file size for uploading.'),
-    'filesNum' => t('The selected file %filename cannot be uploaded. Maximum allowed number (%allowed) of files is exceeded.'),
-    'fileExt' => t('The selected file %filename cannot be uploaded. Only files with the following extensions are allowed: %allowed.'),
+    'fileSize' => t(
+      'The selected file %filename cannot be uploaded, because it exceeds the maximum file size for uploading.'),
+    'filesNum' => t(
+      'The selected file %filename cannot be uploaded. Maximum allowed number (%allowed) of files is exceeded.'),
+    'fileExt' => t(
+      'The selected file %filename cannot be uploaded. Only files with the following extensions are allowed: %allowed.'),
     'unknown' => t('Unknown error type'),
   );
 
@@ -227,7 +240,8 @@ function dragndrop_uploads_example1($form, &$form_state) {
     '#upload_location' => 'public://',
   );
 
-  dragndrop_api_dropzone_add('#block-system-navigation', array('asMirrorFor' => '#droppable-dnd'));
+  dragndrop_api_dropzone_add(
+    '#block-system-navigation', array('asMirrorFor' => '#droppable-dnd'));
 
 //  $form['file'] = array(
 //    '#type' => 'managed_file',

@@ -1,0 +1,8 @@
+name = Drag & Drop Uploads: Image field widget
+description = Provides a drag & drop upload widget for an Image field
+
+core = 7.x
+package = Media
+
+dependencies[] = image
+dependencies[] = dragndrop_uploads_file

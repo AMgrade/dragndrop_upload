@@ -34,7 +34,10 @@ var DnDUploads = function ($droppable) {
       var me = this;
       var settings = me.dnd.settings;
 
+      // Unbind default event callbacks.
       $droppables.unbind('dnd:showErrors');
+      $droppables.unbind('dnd:send:options');
+      $droppables.unbind('dnd:addFiles:after');
 
       /**
        * Add handler for Browse button.
@@ -74,18 +77,22 @@ var DnDUploads = function ($droppable) {
        */
       dnd: {
         /**
-         * Appends the necessary data to the FormData object.
+         * Event callback for dnd:send:options
+         *
+         * Appends the necessary data to the FormData object, alters ajax
+         * options to add Drupal ajax support for element.
          *
          * @param event
          * @param form
          */
-        'dnd:send:form': function (event, form) {
+        'dnd:send:options': function (event, options, form) {
           // Do not call the callback for every droppable area, call it just once.
           if (this.isProcessed(event.type)) {
             return;
           }
           this.setProcessed(event.type);
 
+          var me = this;
           var settings = this.dnd.settings;
           var $formEl = $(settings.selector).closest('form');
 
@@ -106,118 +113,26 @@ var DnDUploads = function ($droppable) {
           form.append('_triggering_element_name', $uploadButton.attr('name'));
           form.append('_triggering_element_value', $uploadButton.attr('value'));
 
-          // Prevent duplicate HTML ids in the returned markup.
-          // @see drupal_html_id()
-          var ajaxHtmlIds = $.map($('[id]'), function (element, index) {
-            return element.id;
+          // Alter options to add Drupal ajax options.
+          var ajax = Drupal.ajax[me.dnd.settings.uploadButton];
+          var drupalAjaxOptions = $.extend({}, ajax.options);
+          options = $.extend(options, drupalAjaxOptions, {
+            data: null,
+            beforeSend: function (xmlhttprequest, options) {
+              options.data = drupalAjaxOptions.data;
+
+              // Call standard Drupal ajax methods.
+              drupalAjaxOptions.beforeSerialize(me.dnd.$droppables, options);
+              drupalAjaxOptions.beforeSend(xmlhttprequest, options);
+
+              // Transform options.data into FormData.
+              var data = $.extend({}, options.data);
+              options.data = form;
+              $.each(data, function (key, value) {
+                form.append(key, value);
+              });
+            }
           });
-
-          // Add Drupal-specific data to the request.
-          form.append('ajax_html_ids[]', ajaxHtmlIds.join(','));
-
-          // Allow Drupal to return new JavaScript and CSS files to load without
-          // returning the ones already loaded.
-          // @see ajax_base_page_theme()
-          // @see drupal_get_css()
-          // @see drupal_get_js()
-          form.append('ajax_page_state[theme]', Drupal.settings.ajaxPageState.theme);
-          form.append('ajax_page_state[theme_token]', Drupal.settings.ajaxPageState.theme_token);
-          for (var key in Drupal.settings.ajaxPageState.css) {
-            form.append('ajax_page_state[css][' + key + ']', 1);
-          }
-          for (key in Drupal.settings.ajaxPageState.js) {
-            form.append('ajax_page_state[js][' + key + ']', 1);
-          }
-        },
-
-        /**
-         * Detach behaviors and execute  Drupal.ajax.beforeSend() method.
-         *
-         * @param event
-         * @param xmlhttprequest
-         * @param options
-         * @returns {*}
-         */
-        'dnd:send:beforeSend': function (event, xmlhttprequest, options) {
-          // Do not call the callback for every droppable area, call it just once.
-          if (this.isProcessed(event.type)) {
-            return;
-          }
-          this.setProcessed(event.type);
-
-          var settings = this.dnd.settings;
-          var ajax = Drupal.ajax[settings.uploadButton];
-
-          // Allow detaching behaviors to update field values before collecting them.
-          // This is only needed when field values are added to the POST data, so only
-          // when there is a form such that this.form.ajaxSubmit() is used instead of
-          // $.ajax(). When there is no form and $.ajax() is used, beforeSerialize()
-          // isn't called, but don't rely on that: explicitly check this.form.
-          if (ajax.form) {
-            var ajaxSettings = ajax.settings || Drupal.settings;
-            Drupal.detachBehaviors(ajax.form, ajaxSettings, 'serialize');
-          }
-
-          ajax.ajaxing = true;
-
-          return ajax.beforeSend(xmlhttprequest, options);
-        },
-
-        /**
-         * Execute Drupal ajax.success().
-         *
-         * @param response
-         * @param status
-         */
-        'dnd:send:success': function (response, status) {
-          // Do not call the callback for every droppable area, call it just once.
-          if (this.isProcessed(event.type)) {
-            return;
-          }
-          this.setProcessed(event.type);
-
-          var ajax = Drupal.ajax[this.dnd.settings.uploadButton];
-
-          ajax.options.success(response, status);
-        },
-
-        /**
-         * Execute Drupal ajax.complete.
-         *
-         * @param response
-         * @param status
-         */
-        'dnd:send:complete': function (response, status) {
-          // Do not call the callback for every droppable area, call it just once.
-          if (this.isProcessed(event.type)) {
-            return;
-          }
-          this.setProcessed(event.type);
-
-          var ajax = Drupal.ajax[this.dnd.settings.uploadButton];
-
-          ajax.options.complete(response, status);
-
-          // Clear the processed array after files have been sent.
-          this.clearProcessed();
-        },
-
-        /**
-         * Set the needed URL for the ajax request.
-         *
-         * @param event
-         * @param options
-         */
-        'dnd:send:options': function (event, options) {
-          // Do not call the callback for every droppable area, call it just once.
-          if (this.isProcessed(event.type)) {
-            return;
-          }
-          this.setProcessed(event.type);
-
-          var ajax = Drupal.ajax[this.dnd.settings.uploadButton];
-
-          options.url = ajax.url;
         },
 
         /**
@@ -247,7 +162,6 @@ var DnDUploads = function ($droppable) {
          * @param {Array} errors
          */
         'dnd:showErrors': function (event, errors) {
-          console.log(123, "0123");
           // Do not call the callback for every droppable area, call it just once.
           if (this.isProcessed(event.type)) {
             return;
@@ -266,7 +180,6 @@ var DnDUploads = function ($droppable) {
           });
 
           var $element = $(settings.selector).parent();
-          console.log($element, "$element");
           $('>.messages.error', $element).remove();
           $element.prepend('<div class="messages error file-upload-js-error">' + messages.join('<br/>') + '</div>');
         },
@@ -290,7 +203,7 @@ var DnDUploads = function ($droppable) {
         event.preventDefault();
 
         this.dnd.$activeDroppable = this.$droppable;
-        $('input[name="'+ this.dnd.settings.name +'"]').click();
+        $('input[name="' + this.dnd.settings.name + '"]').click();
 
         return false;
       },

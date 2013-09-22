@@ -83,6 +83,7 @@ var DnDUploads = function ($droppable) {
          * options to add Drupal ajax support for element.
          *
          * @param event
+         * @param options
          * @param form
          */
         'dnd:send:options': function (event, options, form) {

@@ -1,6 +1,6 @@
 /**
  * @file
- * Contains
+ * Contains a behavior to initialize dragndrop_upload element.
  */
 
 (function ($) {

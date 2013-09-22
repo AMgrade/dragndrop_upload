@@ -1,6 +1,6 @@
 /**
  * @file
- * Contains a behavior-function to add a previewer callback for an image.
+ * Contains a behavior-function to initialize dragndrop_uploads_file widget.
  */
 
 (function ($) {

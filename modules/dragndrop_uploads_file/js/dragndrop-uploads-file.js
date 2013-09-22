@@ -1,6 +1,6 @@
 /**
  * @file
- * Contains a behavior-function.
+ * Contains a behavior-function to initialize dragndrop_uploads_file widget.
  *
  * Settings are provided via Drupal.settings.dragndropUploads variable.
  */

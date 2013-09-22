@@ -151,6 +151,19 @@ function dragndrop_upload_image_pre_render($element) {
     return $element;
   }
 
+  // Add dragndrop_upload_file js at first.
+  $path = drupal_get_path('module', 'dragndrop_upload_file');
+  $element['#attached']['js'][] = array(
+    'type' => 'file',
+    'data' => $path . '/js/dragndrop-upload-file.class.js',
+    'weight' => 5.31,
+  );
+  $element['#attached']['js'][] = array(
+    'type' => 'file',
+    'data' => $path . '/js/dragndrop-upload-file.js',
+    'weight' => 5.32,
+  );
+
   $path = drupal_get_path('module', 'dragndrop_upload_image');
   $element['#attached']['js'][] = array(
     'type' => 'file',

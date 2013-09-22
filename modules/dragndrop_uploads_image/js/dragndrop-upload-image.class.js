@@ -1,30 +1,30 @@
 /**
  * @file
- * Contains DnDUploadsImage class.
+ * Contains DnDUploadImage class.
  */
 
 /**
- * DnDUploadsImage class.
+ * DnDUploadImage class.
  *
- * Attaches events callback to make widget 'dragndrop_uploads_image'
+ * Attaches events callback to make widget 'dragndrop_upload_image'
  * work properly.
  *
  * @param {jQuery} $droppable
  */
-var DnDUploadsImage = function ($droppable) {
+var DnDUploadImage = function ($droppable) {
   this.dnd = $droppable.DnD();
   if (!this.dnd) {
     throw new Error('The $droppable does not contain an instance of DnD!');
   }
 
   this.$droppable = $droppable;
-  this.dnd.$droppables.data('DnDUploadsImage', this);
+  this.dnd.$droppables.data('DnDUploadImage', this);
 
   this.attachEvents(this.dnd.$droppables);
 };
 
 (function ($) {
-  DnDUploadsImage.prototype = $.extend(true, {}, DnDUploadsFile.prototype, {
+  DnDUploadImage.prototype = $.extend(true, {}, DnDUploadFile.prototype, {
     /**
      * Event callback that will be binded to the droppable areas.
      */
@@ -58,7 +58,7 @@ var DnDUploadsImage = function ($droppable) {
          */
         'dnd:destroy:before': function (event, $droppable) {
           this.detachEvents($droppable);
-          $droppable.removeClass('dnd-uploads-image-processed');
+          $droppable.removeClass('dnd-upload-image-processed');
         }
       }
     }

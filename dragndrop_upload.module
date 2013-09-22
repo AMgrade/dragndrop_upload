@@ -2,18 +2,19 @@
 
 /**
  * @file
- * Drag & Drop API module main file.
- * Provides API for drag & drop uploads.
+ * Drag & Drop Upload module main file.
+ *
+ * Provides dragndrop_upload element.
  */
 
 /**
  * Implements hook_menu().
  */
-function dragndrop_uploads_menu() {
-  $items['dragndrop-uploads/example'] = array(
-    'title' => 'Drag & Drop Uploads Example 1',
+function dragndrop_upload_menu() {
+  $items['dragndrop-upload/example'] = array(
+    'title' => 'Drag & Drop Upload Example 1',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('dragndrop_uploads_example1'),
+    'page arguments' => array('dragndrop_upload_example1'),
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
@@ -24,7 +25,7 @@ function dragndrop_uploads_menu() {
 /**
  * Implements hook_theme().
  */
-function dragndrop_uploads_theme($existing, $type, $theme, $path) {
+function dragndrop_upload_theme($existing, $type, $theme, $path) {
   return array(
     'dnd_upload_widget_droppable_area' => array(
       'render element' => 'element',
@@ -40,9 +41,9 @@ function dragndrop_uploads_theme($existing, $type, $theme, $path) {
 /**
  * Implements hook_element_info().
  */
-function dragndrop_uploads_element_info() {
+function dragndrop_upload_element_info() {
   $elements = array();
-  $path = drupal_get_path('module', 'dragndrop_uploads');
+  $path = drupal_get_path('module', 'dragndrop_upload');
   $file_path = drupal_get_path('module', 'file');
 
   $elements['dragndrop_upload'] = array(
@@ -51,11 +52,11 @@ function dragndrop_uploads_element_info() {
     '#element_validate' => array('file_managed_file_validate'),
     '#process' => array(
       'file_managed_file_process',
-      'dragndrop_uploads_element_process',
+      'dragndrop_upload_element_process',
     ),
     '#pre_render' => array(
-      'dragndrop_uploads_pre_render',
-      'dragndrop_uploads_element_pre_render',
+      'dragndrop_upload_pre_render',
+      'dragndrop_upload_element_pre_render',
     ),
     '#theme' => 'file_managed_file',
     '#theme_wrappers' => array('form_element'),
@@ -67,22 +68,22 @@ function dragndrop_uploads_element_info() {
     '#extended' => FALSE,
     '#attached' => array(
       'css' => array(
-        $path . '/css/dragndrop-uploads.css',
+        $path . '/css/dragndrop-upload.css',
         $file_path . '/file.css',
       ),
       'js' => array(
         array(
-          'data' => $path . '/js/dragndrop-uploads.abstract.js',
+          'data' => $path . '/js/dragndrop-upload.abstract.js',
           'type' => 'file',
           'weight' => 5.11,
         ),
         array(
-          'data' => $path . '/js/dragndrop-uploads.class.js',
+          'data' => $path . '/js/dragndrop-upload.class.js',
           'type' => 'file',
           'weight' => 5.12,
         ),
         array(
-          'data' => $path . '/js/dragndrop-uploads.js',
+          'data' => $path . '/js/dragndrop-upload.js',
           'type' => 'file',
           'weight' => 5.2,
         ),
@@ -97,7 +98,7 @@ function dragndrop_uploads_element_info() {
     '#cardinality' => 1,
     '#file_upload_max_size' => file_upload_max_size(),
     '#multiupload' => FALSE,
-    '#errors_info' => dragndrop_uploads_errors_info()
+    '#errors_info' => dragndrop_upload_errors_info()
   );
 
   return $elements;
@@ -106,7 +107,7 @@ function dragndrop_uploads_element_info() {
 /**
  * Process callback for an element.
  */
-function dragndrop_uploads_element_process($element, &$form_state, $form) {
+function dragndrop_upload_element_process($element, &$form_state, $form) {
   $element['upload_button']['#value'] = $element['#upload_button_text'];
   $dnd_id = 'droppable-' . str_replace(
       array('[', ']', '_'),
@@ -128,7 +129,7 @@ function dragndrop_uploads_element_process($element, &$form_state, $form) {
 /**
  * Pre render callback to add JS settings for the element.
  */
-function dragndrop_uploads_element_pre_render($element) {
+function dragndrop_upload_element_pre_render($element) {
   if (isset($element['droppable_area']['#access']) && !$element['droppable_area']['#access']) {
     return $element;
   }
@@ -164,7 +165,7 @@ function dragndrop_uploads_element_pre_render($element) {
   $element['#attached']['js'][] = array(
     'type' => 'setting',
     'data' => array(
-      'dragndropUploads' => array(
+      'dragndropUpload' => array(
         '#' . $element['droppable_area']['#dnd_id'] => TRUE,
       ),
     ),
@@ -183,7 +184,7 @@ function dragndrop_uploads_element_pre_render($element) {
  *
  * @see file_managed_file_pre_render()
  */
-function dragndrop_uploads_pre_render($element) {
+function dragndrop_upload_pre_render($element) {
   // If we already have a file, we don't want to show the upload controls.
   if (!empty($element['#value']['fid'])) {
     $element['upload']['#access'] = FALSE;
@@ -209,9 +210,9 @@ function dragndrop_uploads_pre_render($element) {
  * Get available errors types.
  *
  * Return array with available error types and human-readable messages for them.
- * Types can be altered by hook_dragndrop_uploads_errors_info_alter().
+ * Types can be altered by hook_dragndrop_upload_errors_info_alter().
  */
-function dragndrop_uploads_errors_info() {
+function dragndrop_upload_errors_info() {
   $errors = array(
     'fileSize' => t(
       'The selected file %filename cannot be uploaded, because it exceeds the maximum file size for uploading.'),
@@ -222,15 +223,15 @@ function dragndrop_uploads_errors_info() {
     'unknown' => t('Unknown error type'),
   );
 
-  drupal_alter('dragndrop_uploads_errors_info', $errors);
+  drupal_alter('dragndrop_upload_errors_info', $errors);
 
   return $errors;
 }
 
 /**
- * Form callback for the 'dragndrop-uploads/example'.
+ * Form callback for the 'dragndrop-upload/example'.
  */
-function dragndrop_uploads_example1($form, &$form_state) {
+function dragndrop_upload_example1($form, &$form_state) {
   $form = array();
 
   $form['dnd'] = array(

@@ -9,9 +9,9 @@
 /**
  * Implements hook_field_widget_info().
  */
-function dragndrop_uploads_file_field_widget_info() {
+function dragndrop_upload_file_field_widget_info() {
   return array(
-    'dragndrop_uploads_file' => array(
+    'dragndrop_upload_file' => array(
       'label' => t('Drag & Drop Upload'),
       'field types' => array('file'),
       'settings' => array(
@@ -35,7 +35,7 @@ function dragndrop_uploads_file_field_widget_info() {
 /**
  * Implements hook_field_widget_settings_form().
  */
-function dragndrop_uploads_file_field_widget_settings_form($field, $instance) {
+function dragndrop_upload_file_field_widget_settings_form($field, $instance) {
   $widget = $instance['widget'];
   $settings = $widget['settings'];
 
@@ -94,10 +94,10 @@ function dragndrop_uploads_file_field_widget_settings_form($field, $instance) {
     '#description' => t(
       'Allow multiple files to be uploaded at once. '
     ),
-    '#default_value' => module_exists('dragndrop_uploads_multi') ? $settings['multiupload'] : 0,
+    '#default_value' => module_exists('dragndrop_upload_multi') ? $settings['multiupload'] : 0,
   );
 
-  if (module_exists('dragndrop_uploads_multi')) {
+  if (module_exists('dragndrop_upload_multi')) {
     $_fieldset['multiupload'] += array(
       '#states' => array(
         'disabled' => array(
@@ -122,7 +122,7 @@ function dragndrop_uploads_file_field_widget_settings_form($field, $instance) {
  * Define the actual field input element.
  * TODO: dive into this function again.
  */
-function dragndrop_uploads_file_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+function dragndrop_upload_file_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
   $defaults = array(
     'fid' => 0,
     'display' => !empty($field['settings']['display_default']),
@@ -142,7 +142,7 @@ function dragndrop_uploads_file_field_widget_form(&$form, &$form_state, $field, 
     $items = $field_state['items'];
   }
 
-  // Essentially we use the `dragndrop_uploads_file` type,
+  // Essentially we use the `dragndrop_upload_file` type,
   // extended with some enhancements.
   $widget_settings = $instance['widget']['settings'];
   $instance_settings = $instance['settings'];
@@ -150,7 +150,7 @@ function dragndrop_uploads_file_field_widget_form(&$form, &$form_state, $field, 
   $element_info = element_info('dragndrop_upload');
   $pre_render = array_merge(
     $element_info['#pre_render'],
-    array('dragndrop_uploads_file_pre_render')
+    array('dragndrop_upload_file_pre_render')
   );
   $element += array(
     '#type' => 'dragndrop_upload',
@@ -175,13 +175,13 @@ function dragndrop_uploads_file_field_widget_form(&$form, &$form_state, $field, 
     '#cardinality' => $field['cardinality'],
     // Do not allow for 'multiupload' setting to be enabled if the module
     // is disabled.
-    '#multiupload' => module_exists('dragndrop_uploads_multi') ? $widget_settings['multiupload'] : 0,
+    '#multiupload' => module_exists('dragndrop_upload_multi') ? $widget_settings['multiupload'] : 0,
     // Allows this field to return an array instead of a single value.
     '#extended' => TRUE,
   );
 
   if ($field['cardinality'] != 1) {
-    $element['#pre_render'] = array('dragndrop_uploads_pre_render');
+    $element['#pre_render'] = array('dragndrop_upload_pre_render');
   }
 
   // If there are multiple values, add an element for each existing one.
@@ -252,26 +252,26 @@ function dragndrop_uploads_file_field_widget_form(&$form, &$form_state, $field, 
 /**
  * Pre render callback for the widget.
  */
-function dragndrop_uploads_file_pre_render($element) {
+function dragndrop_upload_file_pre_render($element) {
   if (isset($element['droppable_area']['#access']) && !$element['droppable_area']['#access']) {
     return $element;
   }
 
-  $path = drupal_get_path('module', 'dragndrop_uploads_file');
+  $path = drupal_get_path('module', 'dragndrop_upload_file');
   $element['#attached']['js'][] = array(
     'type' => 'file',
-    'data' => $path . '/js/dragndrop-uploads-file.class.js',
+    'data' => $path . '/js/dragndrop-upload-file.class.js',
     'weight' => 5.31,
   );
   $element['#attached']['js'][] = array(
     'type' => 'file',
-    'data' => $path . '/js/dragndrop-uploads-file.js',
+    'data' => $path . '/js/dragndrop-upload-file.js',
     'weight' => 5.32,
   );
   $element['#attached']['js'][] = array(
     'type' => 'setting',
     'data' => array(
-      'dragndropUploadsFile' => array(
+      'dragndropUploadFile' => array(
         '#' . $element['droppable_area']['#dnd_id'],
       ),
     ),

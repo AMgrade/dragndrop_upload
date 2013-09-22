@@ -1,19 +1,19 @@
 /**
  * @file
- * Contains DnDUploadsAbstract class.
+ * Contains DnDUploadAbstract class.
  */
 
 /**
- * DnDUploadsAbstract class.
+ * DnDUploadAbstract class.
  *
  * Attaches events' callbacks to droppables to make them work properly.
  */
-var DnDUploadsAbstract = function () {
+var DnDUploadAbstract = function () {
   throw new Error('It is disallowed to instantiate this class! Extend it at first.');
 };
 
 (function ($) {
-  DnDUploadsAbstract.prototype = {
+  DnDUploadAbstract.prototype = {
     dnd: null,
     processed: {},
 
@@ -102,7 +102,7 @@ var DnDUploadsAbstract = function () {
      * This method will be used in child classes to call parent methods.
      */
     parent: function () {
-      return DnDUploadsAbstract.prototype;
+      return DnDUploadAbstract.prototype;
     },
 
     /**

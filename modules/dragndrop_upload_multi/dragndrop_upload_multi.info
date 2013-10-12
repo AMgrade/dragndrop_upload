@@ -4,4 +4,5 @@ description = Provides a multiupload functionality for the Drag & Drop Upload wi
 core = 7.x
 package = Media
 
+dependencies[] = dragndrop_upload
 dependencies[] = multiupload_filefield_widget

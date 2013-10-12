@@ -1,15 +1,23 @@
 .droppable-preview-image {
   border: 1px solid #ccc;
-  margin: 1px;
   width: 200px;
 
   float: left;
   overflow: hidden;
+  position: relative;
 }
 
 .droppable-preview-image img {
   position: relative;
-  top: -20px;
   max-width: 200px;
   max-height: 200px;
+}
+
+.preview-remove {
+  cursor: pointer;
+  width: 20px;
+  background-color: #ccc;
+  z-index: 2;
+  position: absolute;
+  margin-left: -20px;
 }

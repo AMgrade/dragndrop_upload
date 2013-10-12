@@ -92,25 +92,26 @@ function dragndrop_upload_file_field_widget_settings_form($field, $instance) {
     '#type' => 'checkbox',
     '#title' => t('Allow multiupload'),
     '#description' => t(
-      'Allow multiple files to be uploaded at once. '
+      'Allow multiple files to be uploaded at once.<br/>The setting is available when field cardinality is greater than 1.'
     ),
-    '#default_value' => module_exists('dragndrop_upload_multi') ? $settings['multiupload'] : 0,
+    '#default_value' => module_exists(
+      'dragndrop_upload_multi') ? $settings['multiupload'] : 0,
   );
 
-  if (module_exists('dragndrop_upload_multi')) {
-    $_fieldset['multiupload'] += array(
-      '#states' => array(
-        'disabled' => array(
-          'select[name="field[cardinality]"]' => array(
-            'value' => 1,
-          ),
+  $_fieldset['multiupload'] += array(
+    '#states' => array(
+      'disabled' => array(
+        'select[name="field[cardinality]"]' => array(
+          'value' => 1,
         ),
       ),
-    );
-  }
-  else {
+    ),
+  );
+
+  if (!module_exists('dragndrop_upload_multi')) {
     $_fieldset['multiupload']['#disabled'] = TRUE;
-    $_fieldset['multiupload']['#description'] .= t('Drag & Drop Multiupload Widget is required for this setting.');
+    $_fieldset['multiupload']['#description'] .= t(
+      'Drag & Drop Upload: Multiupload support is required for this setting.');
   }
 
   return $form;
@@ -170,18 +171,18 @@ function dragndrop_upload_file_field_widget_form(&$form, &$form_state, $field, $
     '#standard_upload' => $widget_settings['standard_upload'],
     '#upload_button_text' => $widget_settings['upload_button_text'],
     '#droppable_area_text' => $widget_settings['droppable_area_text'],
-    '#file_upload_max_size' => $instance_settings['max_filesize'] ? $instance_settings['max_filesize'] : file_upload_max_size(
-    ),
+    '#file_upload_max_size' => $instance_settings['max_filesize'] ? $instance_settings['max_filesize'] : file_upload_max_size(),
     '#cardinality' => $field['cardinality'],
     // Do not allow for 'multiupload' setting to be enabled if the module
     // is disabled.
-    '#multiupload' => module_exists('dragndrop_upload_multi') ? $widget_settings['multiupload'] : 0,
+    '#multiupload' => module_exists(
+      'dragndrop_upload_multi') ? $widget_settings['multiupload'] : 0,
     // Allows this field to return an array instead of a single value.
     '#extended' => TRUE,
   );
 
   if ($field['cardinality'] != 1) {
-    $element['#pre_render'] = array('dragndrop_upload_pre_render');
+    $element['#pre_render'] = array('dragndrop_upload_element_pre_render');
   }
 
   // If there are multiple values, add an element for each existing one.

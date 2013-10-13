@@ -1,4 +1,4 @@
-name = Drag & Drop Upload: examples
+name = Drag & Drop Upload: Examples
 description = Contains examples of how to create droppable zones.
 
 core = 7.x

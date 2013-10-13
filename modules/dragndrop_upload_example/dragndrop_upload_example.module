@@ -29,8 +29,6 @@ function dragndrop_upload_example_menu() {
 
 /**
  * Page callback for 'dragndrop-upload/example-api'.
- *
- * @return array
  */
 function dragndrop_upload_example_dropzone() {
   if ($_FILES) {
@@ -51,33 +49,33 @@ function dragndrop_upload_example_dropzone() {
   $build['dropzone'] = array(
     '#type' => 'container',
     '#attributes' => array(
-      'class' => 'dragndrop-example-api'
+      'class' => 'dragndrop-example-api',
     ),
     'text' => array(
-      '#markup' => t('Dropzone here')
+      '#markup' => t('Dropzone here'),
     ),
     '#attached' => array(
       'css' => array(
-        $path . '/css/dragndrop-upload-example.css'
+        $path . '/css/dragndrop-upload-example.css',
       ),
       'dragndrop_upload' => array(
-        $settings
-      )
+        $settings,
+      ),
     ),
   );
 
   $build['dropzone2'] = array(
     '#type' => 'container',
     '#attributes' => array(
-      'class' => 'dragndrop-example-api'
+      'class' => 'dragndrop-example-api',
     ),
     'text' => array(
-      '#markup' => t('Same dropzone here')
+      '#markup' => t('Same dropzone here'),
     ),
     '#attached' => array(
       'dragndrop_upload' => array(
-        $settings
-      )
+        $settings,
+      ),
     ),
   );
 
@@ -119,14 +117,14 @@ function dragndrop_upload_example_element($form, &$form_state) {
   $form['dropzone'] = array(
     '#type' => 'container',
     '#attributes' => array(
-      'class' => array('dragndrop-example-element-mirror')
+      'class' => array('dragndrop-example-element-mirror'),
     ),
     'text' => array(
-      '#markup' => t('Mirror dropzone here')
+      '#markup' => t('Mirror dropzone here'),
     ),
     '#attached' => array(
       'css' => array(
-        $path . '/css/dragndrop-upload-example.css'
+        $path . '/css/dragndrop-upload-example.css',
       ),
     ),
   );

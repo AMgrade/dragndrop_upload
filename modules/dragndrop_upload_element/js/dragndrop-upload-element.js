@@ -9,7 +9,6 @@
       if (!settings.dragndropUploadElement) {
         return;
       }
-
       $.each(settings.dragndropUploadElement, function (selector) {
         $(selector, context).once('dnd-upload-element', function () {
           new DnDUpload($(this));

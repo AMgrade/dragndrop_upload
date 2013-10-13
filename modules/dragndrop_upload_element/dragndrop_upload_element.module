@@ -2,25 +2,8 @@
 
 /**
  * @file
- * Drag & Drop Upload module main file.
- *
  * Provides dragndrop_upload element.
  */
-
-/**
- * Implements hook_menu().
- */
-function dragndrop_upload_element_menu() {
-  $items['dragndrop-upload-element/example'] = array(
-    'title' => 'Drag & Drop Upload Example 1',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('dragndrop_upload_element_example1'),
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  );
-
-  return $items;
-}
 
 /**
  * Implements hook_theme().
@@ -202,30 +185,4 @@ function dragndrop_upload_element_pre_render($element) {
   $element['upload']['#theme_wrappers'][] = 'dnd_upload_widget_standard_upload';
 
   return $element;
-}
-
-/**
- * Form callback for the 'dragndrop-upload/example'.
- */
-function dragndrop_upload_element_example1($form, &$form_state) {
-  $form = array();
-
-  $form['dnd'] = array(
-    '#type' => 'dragndrop_upload',
-    '#title' => t('Drag & Drop files here'),
-    '#file_upload_max_size' => '10M',
-    '#upload_location' => 'public://',
-    '#upload_event' => 'manual',
-  );
-
-  dragndrop_upload_dropzone_add(
-    '#block-system-navigation', array('asMirrorFor' => '#droppable-dnd')
-  );
-
-//  $form['file'] = array(
-//    '#type' => 'managed_file',
-//    '#title' => t('File')
-//  );
-
-  return $form;
 }

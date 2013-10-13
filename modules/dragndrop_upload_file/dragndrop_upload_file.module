@@ -2,7 +2,6 @@
 
 /**
  * @file
- * Drag & Drop Upload Widget module main file.
  * Provides an dragndrop_upload element and a widget for a File field.
  */
 

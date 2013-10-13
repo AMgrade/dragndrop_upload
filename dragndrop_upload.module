@@ -2,25 +2,19 @@
 
 /**
  * @file
- * Drag & Drop API module main file.
- * Provides API for drag & drop uploads.
+ * Provides API for drag & drop upload features.
  */
 
 /**
  * Implements hook_menu().
  */
 function dragndrop_upload_menu() {
-  $items['dragndrop-upload/example'] = array(
-    'title' => 'Drag & Drop API Example 1',
-    'page callback' => 'dragndrop_upload_example1',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  );
-
   $items['system/dragndrop/%'] = array(
     'page callback' => 'dragndrop_upload_callback',
     'page arguments' => array(2),
     'access arguments' => TRUE,
+    'delivery callback' => 'ajax_deliver',
+    'theme callback' => 'ajax_base_page_theme',
     'type' => MENU_CALLBACK,
   );
 
@@ -200,72 +194,4 @@ function dragndrop_upload_errors_info() {
   drupal_alter('dragndrop_upload_errors_info', $errors);
 
   return $errors;
-}
-
-/**
- * Page callback for the example 1.
- *
- * @return array
- */
-function dragndrop_upload_example1() {
-  if ($_FILES) {
-    exit(print_r($_FILES, 1));
-  }
-  $build = array();
-
-  $settings = array(
-    'selector' => '.dragndrop-example1',
-    'settings' => array(
-      'name' => 'dragndrop-example1',
-//    'url' => 'dragndrop-upload/example',
-      'callback' => 'dragndrop_upload_example1_callback',
-    ),
-  );
-
-  $build['dropzone'] = array(
-    '#type' => 'container',
-    '#attributes' => array(
-      'class' => 'dragndrop-example1'
-    ),
-    'text' => array(
-      '#markup' => t('<br/><br/>Test<br/><br/>')
-    ),
-    '#attached' => array(
-      'dragndrop_upload' => array(
-        $settings
-      )
-    ),
-  );
-
-  $build['dropzone2'] = array(
-    '#type' => 'container',
-    '#attributes' => array(
-      'class' => 'dragndrop-example1'
-    ),
-    'text' => array(
-      '#markup' => t('<br/><br/>Test 2<br/><br/>')
-    ),
-    '#attached' => array(
-      'dragndrop_upload' => array(
-        $settings
-      )
-    ),
-  );
-
-//  dragndrop_upload_dropzone_add('#dragndrop-example1', $settings);
-
-  return $build;
-}
-
-/**
- * Ajax file callback for example dropzones.
- *
- * @param $name
- * @param $file
- * @return null
- */
-function dragndrop_upload_example1_callback($name, $file) {
-  print_r($file);
-
-  return NULL;
 }

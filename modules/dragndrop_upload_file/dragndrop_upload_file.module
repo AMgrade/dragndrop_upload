@@ -82,9 +82,9 @@ function dragndrop_upload_file_field_widget_settings_form($field, $instance) {
   );
   $_fieldset['standard_upload'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Show Standard Upload Widget'),
+    '#title' => t('Show Browse button'),
     '#description' => t(
-      "Show standard Upload widget below Drag'n'nDrop area"
+      "Show Browse button in the Drag & Drop area"
     ),
     '#default_value' => $settings['standard_upload'],
   );

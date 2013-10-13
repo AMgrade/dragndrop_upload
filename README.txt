@@ -12,7 +12,7 @@ and an Image fields.
 * Provides drag & drop upload element (dragndrop_upload).
 * Flexible JS part of the module, that allows developers to define custom
 validators and previewers for a dropzone.
-* Makes it possible to turn any element into a dropzone (see Examples submodule).
+* Makes it possible to turn any element into a dropzone(see Examples submodule).
 
 
 -- INSTALLATION --
@@ -33,10 +33,10 @@ contains examples of how to use dropzones and dragndrop_upload element.
 examples of how to add new or change the functionality.
 * DnD js class (dragndrop-upload.dnd.js) is a class that contains core
 functionality for Drag & Drop uploads. See the comments for the DnD class to get
-info about events that are triggered by DnD class. Using custom events is a great
-way to change the functionality.
-* You can even override default DnD, DnDUploadAbstract, DnDUpload, DnDUploadFile,
-DnDUploadImage classes to change the functionality.
+info about events that are triggered by DnD class. Using custom events is a
+great way to change the functionality.
+* You can even override default DnD, DnDUploadAbstract, DnDUpload,
+DnDUploadFile, DnDUploadImage classes to change the functionality.
 
 -- CONTACT --
 

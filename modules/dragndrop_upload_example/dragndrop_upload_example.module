@@ -86,10 +86,12 @@ function dragndrop_upload_example_dropzone() {
  * Ajax file callback for example dropzones.
  *
  * @param string $name
- *  Name of the dropzone.
+ *   Name of the dropzone.
  * @param array $file
- *  Received file array, extracted the $_FILES.
- * @return null
+ *   Received file array, extracted the $_FILES.
+ *
+ * @return array
+ *   Ajax commands.
  */
 function dragndrop_upload_example_dropzone_callback($name, $file) {
   $commands = array();

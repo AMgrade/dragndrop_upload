@@ -53,6 +53,7 @@
   color: #555;
 }
 
-.droppable-controls input, .form-managed-file .droppable-controls input.progress-disabled {
+.droppable-controls input,
+.form-managed-file .droppable-controls input.progress-disabled {
   display: none;
 }

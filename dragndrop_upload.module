@@ -57,7 +57,8 @@ function dragndrop_upload_modules_enabled($modules) {
  * Calls the 'callback' function from the dropzone settings array.
  *
  * @param string $id
- *   Id of the dropzone that has been generated in dragndrop_upload_dropzone_add().
+ *   Id of the dropzone that has been generated in
+ *   dragndrop_upload_dropzone_add().
  *
  * @return mixed
  *   Return from callback function (should be ajax commands or text).

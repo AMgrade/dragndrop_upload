@@ -259,7 +259,7 @@ var DnDUpload = function ($droppable) {
         },
 
         /**
-         * Detach events before the droppable zone will be destroyed.
+         * Detach events before the droppable area will be destroyed.
          *
          * @param event
          * @param $droppable

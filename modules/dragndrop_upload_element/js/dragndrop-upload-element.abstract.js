@@ -44,7 +44,7 @@ var DnDUploadAbstract = function () {
     },
 
     /**
-     * Add droppable zone.
+     * Add droppable area.
      *
      * @param {string|jQuery} droppable
      */
@@ -56,7 +56,7 @@ var DnDUploadAbstract = function () {
     },
 
     /**
-     * Remove droppable zone.
+     * Remove droppable area.
      *
      * @param {string|jQuery} droppable
      */

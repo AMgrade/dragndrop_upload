@@ -281,7 +281,7 @@ function DnD(droppable, settings) {
     },
 
     /**
-     * Add new droppable zone.
+     * Add new droppable area.
      *
      * @param {string|jQuery} droppable
      */
@@ -296,7 +296,7 @@ function DnD(droppable, settings) {
     },
 
     /**
-     * Remove droppable zone.
+     * Remove droppable area.
      *
      * @param {string|jQuery} droppable
      */

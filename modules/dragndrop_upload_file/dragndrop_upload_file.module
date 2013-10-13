@@ -41,7 +41,7 @@ function dragndrop_upload_file_field_widget_settings_form($field, $instance) {
   $_fieldset =& $form['dragndrop_fieldset'];
   $_fieldset = array(
     '#type' => 'fieldset',
-    '#title' => t('Drag & Drop Upload Widget settings'),
+    '#title' => t('Drag & Drop Upload settings'),
     '#weight' => 20,
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,

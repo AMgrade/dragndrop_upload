@@ -87,6 +87,11 @@ function DnD(droppable, settings) {
       }
 
       if (validators.extensions) {
+        // Make extensions lowercase.
+        validators.extensions = $.map(validators.extensions, function (item) {
+          return item.toLowerCase();
+        });
+
         $droppables.bind('dnd:validateFile', me.validatorsList.fileExt.bind(me));
       }
 
@@ -188,7 +193,7 @@ function DnD(droppable, settings) {
 
       fileExt: function (event, dndFile) {
         var settings = this.settings;
-        var ext = dndFile.file.name.split('.').pop();
+        var ext = dndFile.file.name.split('.').pop().toLowerCase();
         var isValid = false;
 
         $.each(settings.validators.extensions, function (index, allowedExt) {

@@ -26,7 +26,11 @@ function dragndrop_upload_element_theme($existing, $type, $theme, $path) {
  */
 function dragndrop_upload_element_element_info() {
   $elements = array();
-  $path = drupal_get_path('module', 'dragndrop_upload_element');
+  $path = array(
+    'dndu' => drupal_get_path('module', 'dragndrop_upload'),
+    'dndu_element' => drupal_get_path('module', 'dragndrop_upload_element'),
+  );
+
   $file_path = drupal_get_path('module', 'file');
 
   $elements['dragndrop_upload'] = array(
@@ -51,22 +55,37 @@ function dragndrop_upload_element_element_info() {
     '#extended' => FALSE,
     '#attached' => array(
       'css' => array(
-        $path . '/css/dragndrop-upload-element.css',
+        $path['dndu_element'] . '/css/dragndrop-upload-element.css',
         $file_path . '/file.css',
       ),
       'js' => array(
+        // It is needed to add core dndu js files here, because they will be not
+        // automatically added to the page when the element is already filled
+        // with file. It is needed to have them on page to retrieve proper
+        // context when removing file and initializing droppalbe area.
+        // Related to issue #2135555 (https://drupal.org/node/2135555).
         array(
-          'data' => $path . '/js/dragndrop-upload-element.abstract.js',
+          'data' => $path['dndu'] . '/js/dragndrop-upload.dnd.js',
+          'type' => 'file',
+          'group' => JS_LIBRARY,
+        ),
+        array(
+          'data' => $path['dndu'] . '/js/dragndrop-upload.js',
+          'type' => 'file',
+          'weight' => 5.01,
+        ),
+        array(
+          'data' => $path['dndu_element'] . '/js/dragndrop-upload-element.abstract.js',
           'type' => 'file',
           'weight' => 5.11,
         ),
         array(
-          'data' => $path . '/js/dragndrop-upload-element.class.js',
+          'data' => $path['dndu_element'] . '/js/dragndrop-upload-element.class.js',
           'type' => 'file',
           'weight' => 5.12,
         ),
         array(
-          'data' => $path . '/js/dragndrop-upload-element.js',
+          'data' => $path['dndu_element'] . '/js/dragndrop-upload-element.js',
           'type' => 'file',
           'weight' => 5.2,
         ),

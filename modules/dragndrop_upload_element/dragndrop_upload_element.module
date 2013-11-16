@@ -29,9 +29,8 @@ function dragndrop_upload_element_element_info() {
   $path = array(
     'dndu' => drupal_get_path('module', 'dragndrop_upload'),
     'dndu_element' => drupal_get_path('module', 'dragndrop_upload_element'),
+    'file' => drupal_get_path('module', 'file'),
   );
-
-  $file_path = drupal_get_path('module', 'file');
 
   $elements['dragndrop_upload'] = array(
     '#input' => TRUE,
@@ -56,7 +55,7 @@ function dragndrop_upload_element_element_info() {
     '#attached' => array(
       'css' => array(
         $path['dndu_element'] . '/css/dragndrop-upload-element.css',
-        $file_path . '/file.css',
+        $path['file'] . '/file.css',
       ),
       'js' => array(
         // It is needed to add core dndu js files here, because they will be not
@@ -89,7 +88,7 @@ function dragndrop_upload_element_element_info() {
           'type' => 'file',
           'weight' => 5.2,
         ),
-        $file_path . '/file.js',
+        $path['file'] . '/file.js',
       ),
     ),
     '#upload_event' => 'auto',

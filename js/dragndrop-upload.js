@@ -66,7 +66,6 @@
    */
   var showErrors = function (event, errors) {
     var me = this;
-    console.log(errors, "errors");
     var messages = [];
     // Go through the errors array and create human-readable messages.
     $.each(errors, function (i, error) {

@@ -37,6 +37,10 @@ function dragndrop_upload_image_field_widget_info() {
  */
 function dragndrop_upload_image_field_widget_settings_form($field, $instance) {
   $form = image_field_widget_settings_form($field, $instance);
+  // Unset 'progress_indicator', as it will be added
+  // in dragndrop_upload_file_field_widget_settings_form().
+  unset($form['progress_indicator']);
+  
   $form = array_merge_recursive(
     $form,
     dragndrop_upload_file_field_widget_settings_form($field, $instance)

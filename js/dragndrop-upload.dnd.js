@@ -12,7 +12,7 @@
  *    Arguments: event, transFiles
  *
  *  dnd:addFiles:added
- *    Arguments: event, dndFile
+ *    Arguments: event, dndFile, index, filesNumber
  *
  *  dnd:addFiles:after
  *    Arguments: event, filesList
@@ -273,7 +273,7 @@ function DnD(droppable, settings) {
         this.setFilesList(filesList);
 
         // Trigger event telling that dndFile has been added.
-        $droppable.trigger('dnd:addFiles:added', [dndFile]);
+        $droppable.trigger('dnd:addFiles:added', [dndFile, i, n]);
       }
 
       if (errors.length) {
@@ -327,11 +327,29 @@ function DnD(droppable, settings) {
     createPreview: function (event, dndFile) {
       var reader = new FileReader();
 
+      // Save createPreview handlers.
+      var droppableEvents = dndFile.$droppable.data('events');
+      var createPreviewHandlers = {};
+      if (droppableEvents['dnd:createPreview']) {
+        createPreviewHandlers = $.extend({}, droppableEvents['dnd:createPreview']);
+      }
+
       reader.onload = function () {
         // Give others an ability to build a preview for a dndFile.
         // Trigger event for all droppables. Each one should decide what to do
         // accodring to the $droppable reference in the dndFile object.
-        dndFile.$droppable.trigger('dnd:createPreview', [dndFile, reader]);
+        //
+        // It is needed to call event handlers in a such weird way because in
+        // case of auto upload at this point events are already detached because
+        // of sent Drupal.ajax request.
+        $.each(createPreviewHandlers, function (i, event) {
+          var result = event.handler(dndFile, reader);
+          // Allow callbacks to prevent others running.
+          if (result === false) {
+            return result;
+          }
+          return true;
+        });
       };
       reader.readAsDataURL(dndFile.file);
     },

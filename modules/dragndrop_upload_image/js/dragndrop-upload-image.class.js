@@ -26,6 +26,20 @@ var DnDUploadImage = function ($droppable) {
 (function ($) {
   DnDUploadImage.prototype = $.extend(true, {}, DnDUploadFile.prototype, {
     /**
+     * Attach events to the given droppable areas.
+     *
+     * @param {jQuery} $droppables
+     */
+    attachEvents: function ($droppables) {
+      var me = this;
+
+      me.parent().attachEvents.call(me, $droppables);
+
+      // Unbind default createPreview event handler and add a new one.
+      $droppables.unbind('dnd:createPreview').bind('dnd:createPreview', me.eventsList.dnd['dnd:createPreview']);
+    },
+    
+    /**
      * Event callback that will be binded to the droppable areas.
      */
     eventsList: {
@@ -33,7 +47,7 @@ var DnDUploadImage = function ($droppable) {
        * Droppable events.
        */
       dnd: {
-        'dnd:createPreview': function (event, dndFile, reader) {
+        'dnd:createPreview': function (dndFile, reader) {
           var me = this;
           var $previewCnt = $('.droppable-preview', me.$droppable);
           var $preview = dndFile.$preview = $('.droppable-preview-image', $previewCnt).last();
@@ -57,7 +71,6 @@ var DnDUploadImage = function ($droppable) {
          * @param $droppable
          */
         'dnd:destroy:before': function (event, $droppable) {
-          this.detachEvents($droppable);
           $droppable.removeClass('dnd-upload-image-processed');
         }
       }

@@ -26,32 +26,6 @@ var DnDUploadFile = function ($droppable) {
 (function ($) {
   DnDUploadFile.prototype = $.extend({}, DnDUploadAbstract.prototype, {
     /**
-     * Attach events to the given droppable areas.
-     *
-     * @param {jQuery} $droppables
-     */
-    attachEvents: function ($droppables) {
-      this.parent().attachEvents.call(this, $droppables);
-    },
-
-    /**
-     * Detach events from the given droppable areas.
-     *
-     * @param {jQuery|undefined} $droppables
-     */
-    detachEvents: function ($droppables) {
-      var me = this;
-      var settings = me.dnd.settings;
-      var $uploadButton = $('#' + settings.uploadButton);
-
-      if (settings.uploadEvent == 'manual') {
-        $uploadButton.unbind('mousedown');
-      }
-
-      me.parent().detachEvents.call(me, $droppables);
-    },
-
-    /**
      * Event callback that will be binded to the droppable areas.
      */
     eventsList: {
@@ -66,7 +40,6 @@ var DnDUploadFile = function ($droppable) {
          * @param $droppable
          */
         'dnd:destroy:before': function (event, $droppable) {
-          this.detachEvents($droppable);
           $droppable.removeClass('dnd-upload-file-processed');
         }
       }

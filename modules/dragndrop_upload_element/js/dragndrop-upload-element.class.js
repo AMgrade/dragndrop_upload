@@ -44,9 +44,14 @@ var DnDUpload = function ($droppable) {
        */
       $(settings.browseButton).bind('click', me.eventsList.browseButtonClick.bind(me));
 
-      if (settings.uploadEvent == 'manual') {
-        $('#' + settings.uploadButton).unbind('mousedown').bind('mousedown', me.eventsList.uploadBtnMousedown.bind(me));
-      }
+      var $uploadButton = $('#' + settings.uploadButton);
+      // Unbind all mousedown handlers. This is needed to prevent default 
+      // event handler to trigger Drupal.ajax request.
+      $uploadButton.unbind('mousedown');
+      $uploadButton.bind('mousedown', me.eventsList.uploadBtnMousedown.bind(me));
+      // Bind fileButtons handlers again, because they were removed.
+      $uploadButton.bind('mousedown', Drupal.file.disableFields);
+      $uploadButton.bind('mousedown', Drupal.file.progressBar);
 
       /**
        * Attach the change event to the file input element to track and add
@@ -67,7 +72,7 @@ var DnDUpload = function ($droppable) {
       var settings = me.dnd.settings;
 
       me.parent().detachEvents.call(me, $droppables);
-
+      $('#' + settings.uploadButton).unbind('mousedown');
       $(settings.browseButton).unbind('click');
       $('input[name="' + settings.name + '"]').unbind('change');
     },
@@ -155,12 +160,13 @@ var DnDUpload = function ($droppable) {
          * Event callback for the 'dnd:addFiles:after' event.
          */
         'dnd:addFiles:after': function () {
+          var settings = this.dnd.settings;
+          var $uploadButton = $('#' + settings.uploadButton);
+
           if (this.dnd.settings.uploadEvent == 'auto') {
-            this.dnd.send();
+            $uploadButton.trigger('mousedown');
           }
           else {
-            var settings = this.dnd.settings;
-            var $uploadButton = $('#' + settings.uploadButton);
             var $droppableMsg = $('.droppable-message', this.$droppable);
 
             // Hide preview message if files number has reached the cardinality.
@@ -212,7 +218,7 @@ var DnDUpload = function ($droppable) {
           }
         },
 
-        'dnd:createPreview': function (event, dndFile) {
+        'dnd:createPreview': function (dndFile) {
           var fileSize = dndFile.file.size;
           var sizes = [Drupal.t('@size B'), Drupal.t('@size KB'), Drupal.t('@size MB'), Drupal.t('@size GB')];
           $.each(sizes, function (i, size) {

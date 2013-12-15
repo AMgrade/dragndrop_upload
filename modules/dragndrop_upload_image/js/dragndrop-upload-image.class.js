@@ -49,7 +49,7 @@ var DnDUploadImage = function ($droppable) {
       dnd: {
         'dnd:createPreview': function (dndFile, reader) {
           var me = this;
-          var $previewCnt = $('.droppable-preview', me.$droppable);
+          var $previewCnt = $('.droppable-preview', dndFile.$droppable);
           var $preview = dndFile.$preview = $('.droppable-preview-image', $previewCnt).last();
           $preview.data('dndFile', dndFile);
 

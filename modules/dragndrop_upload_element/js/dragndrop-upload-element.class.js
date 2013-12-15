@@ -246,7 +246,7 @@ var DnDUpload = function ($droppable) {
           });
 
           var me = this;
-          var $previewCnt = $('.droppable-preview', me.$droppable);
+          var $previewCnt = $('.droppable-preview', dndFile.$droppable);
           var $preview = dndFile.$preview = $('.droppable-preview-file', $previewCnt).last();
           $preview.data('dndFile', dndFile);
 

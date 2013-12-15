@@ -18,7 +18,7 @@
  *    Arguments: event, filesList
  *
  *  dnd:createPreview
- *    Arguments: event, dndFile, {FileReader} reader
+ *    Arguments: dndFile, {FileReader} reader
  *
  *  dnd:removePreview
  *    Arguments: event, dndFile

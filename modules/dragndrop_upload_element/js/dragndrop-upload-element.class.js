@@ -154,6 +154,15 @@ var DnDUpload = function ($droppable) {
           var settings = this.dnd.settings;
           var $element = $(settings.selector).parent();
           $('>.messages.error', $element).remove();
+
+          // Allow new file to replace existing one when cardinality equals 1
+          // and 'Allow replacing of existing file' setting is turned on.
+          var filesList = this.dnd.getFilesList();
+          if (settings.cardinality == 1) {
+            if (filesList.length && settings.allowReplace) {
+              this.dnd.removeFile(filesList[0]);
+            }
+          }
         },
 
         /**
@@ -170,8 +179,12 @@ var DnDUpload = function ($droppable) {
             var $droppableMsg = $('.droppable-message', this.$droppable);
 
             // Hide preview message if files number has reached the cardinality.
-            if (settings.cardinality != -1 && settings.cardinality <= this.dnd.getFilesList().length) {
-              $droppableMsg.hide();
+            if (settings.cardinality != -1) {
+              if (settings.cardinality <= this.dnd.getFilesList().length) {
+                if (settings.cardinality != 1 || !settings.allowReplace) {
+                  $droppableMsg.hide();
+                }
+              }
             }
 
             $uploadButton.show();

@@ -96,6 +96,9 @@ function dragndrop_upload_element_element_info() {
     '#droppable_area_text' => t('Drop files here to upload'),
     // This setting is responsive for showing Browse button or not.
     '#standard_upload' => 1,
+    // This setting can allow the Browse button to be displayed even if field
+    // already contains a file. Selected new file will replace the existing one.
+    '#allow_replace' => 0,
     '#cardinality' => 1,
     '#file_upload_max_size' => file_upload_max_size(),
     '#multiupload' => FALSE,
@@ -157,6 +160,7 @@ function dragndrop_upload_element_element_pre_render($element) {
       ),
       'uploadButton' => $element['upload_button']['#id'],
       'browseButton' => $selector . ':parent .droppable-browse-button',
+      'allowReplace' => $element['#allow_replace'],
       'uploadEvent' => $element['#upload_event'],
     ),
   );

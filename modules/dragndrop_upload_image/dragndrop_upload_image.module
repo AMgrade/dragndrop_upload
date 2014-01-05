@@ -10,9 +10,10 @@
  */
 function dragndrop_upload_image_theme($existing, $type, $theme, $path) {
   return array(
-    'dnd_upload_image_droppable_area' => array(
+    'dnd_upload_droppable_area_image' => array(
       'render element' => 'element',
-      'template' => 'templates/droppable-area-image',
+      'template' => 'dnd-upload-droppable-area-image',
+      'path' => $path . '/templates',
     ),
   );
 }
@@ -139,7 +140,7 @@ function dragndrop_upload_image_field_widget_form(&$form, &$form_state, $field, 
  * Custom process callback for the 'dragndrop_upload_image' widget.
  */
 function dragndrop_upload_image_widget_process($element, &$form_state, $form) {
-  $element['droppable_area']['#theme'] = 'dnd_upload_image_droppable_area';
+  $element['droppable_area']['#theme'] = 'dnd_upload_droppable_area_image';
 
   $path = drupal_get_path('module', 'dragndrop_upload_image');
   $element['#attached']['css'][] = $path . '/css/dragndrop-upload-image.css';

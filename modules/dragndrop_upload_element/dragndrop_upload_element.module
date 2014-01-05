@@ -10,13 +10,15 @@
  */
 function dragndrop_upload_element_theme($existing, $type, $theme, $path) {
   return array(
-    'dnd_upload_widget_droppable_area' => array(
+    'dnd_upload_droppable_area' => array(
       'render element' => 'element',
-      'template' => 'templates/droppable-area',
+      'template' => 'dnd-upload-droppable-area',
+      'path' => $path . '/templates',
     ),
-    'dnd_upload_widget_standard_upload' => array(
+    'dnd_upload_standard_upload' => array(
       'render element' => 'element',
-      'template' => 'templates/standard-upload',
+      'template' => 'dnd-upload-standard-upload',
+      'path' => $path . '/templates',
     ),
   );
 }
@@ -118,7 +120,7 @@ function dragndrop_upload_element_element_process($element, &$form_state, $form)
       $element['#name']
     );
   $element['droppable_area'] = array(
-    '#theme' => 'dnd_upload_widget_droppable_area',
+    '#theme' => 'dnd_upload_droppable_area',
     '#text' => $element['#droppable_area_text'],
     '#name' => $element['#name'],
     '#dnd_id' => $dnd_id,
@@ -204,7 +206,7 @@ function dragndrop_upload_element_pre_render($element) {
     hide($element['remove_button']);
   }
 
-  $element['upload']['#theme_wrappers'][] = 'dnd_upload_widget_standard_upload';
+  $element['upload']['#theme_wrappers'][] = 'dnd_upload_standard_upload';
 
   return $element;
 }

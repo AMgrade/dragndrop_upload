@@ -61,8 +61,8 @@ function DnD(droppable, settings) {
   DnD.prototype = {
     $droppables: null,
     $activeDroppable: null,
-    filesList: [],
-    settings: {},
+    filesList: null,
+    settings: null,
 
     /**
      * Attach events to the given droppable areas.
@@ -242,7 +242,6 @@ function DnD(droppable, settings) {
      */
     addFiles: function ($droppable, transFiles) {
       var dndFile, errors = [], filesList = this.getFilesList();
-
       $droppable.trigger('dnd:addFiles:before', [transFiles]);
 
       for (var i = 0, n = transFiles.length; i < n; i++) {

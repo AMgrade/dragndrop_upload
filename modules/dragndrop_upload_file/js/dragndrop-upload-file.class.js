@@ -24,7 +24,7 @@ var DnDUploadFile = function ($droppable) {
 };
 
 (function ($) {
-  DnDUploadFile.prototype = $.extend({}, DnDUploadAbstract.prototype, {
+  DnDUploadFile.prototype = $.extend(true, {}, DnDUploadAbstract.prototype, {
     /**
      * Event callback that will be binded to the droppable areas.
      */

@@ -323,7 +323,7 @@ var DnDUpload = function ($droppable) {
         // the input element and the droppable area.
         $(event.target).val('');
 
-        this.dnd.$droppables.DnD().addFiles(this.dnd.$activeDroppable, transFiles);
+        this.dnd.addFiles(this.dnd.$activeDroppable, transFiles);
       }
     }
   });

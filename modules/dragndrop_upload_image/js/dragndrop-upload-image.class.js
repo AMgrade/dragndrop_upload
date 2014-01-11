@@ -36,7 +36,7 @@ var DnDUploadImage = function ($droppable) {
       me.parent().attachEvents.call(me, $droppables);
 
       // Unbind default createPreview event handler and add a new one.
-      $droppables.unbind('dnd:createPreview').bind('dnd:createPreview', me.eventsList.dnd['dnd:createPreview']);
+      $droppables.unbind('dnd:createPreview').bind('dnd:createPreview', me.eventsList.dnd['dnd:createPreview'].bind(me));
     },
     
     /**
@@ -48,7 +48,9 @@ var DnDUploadImage = function ($droppable) {
        */
       dnd: {
         'dnd:createPreview': function (dndFile, reader) {
-          var me = this;
+          var DnD = this.dnd;
+          // Or you can get DnD this way:
+          // var DnD = dndFile.$droppable.data('DnD');
           var $previewCnt = $('.droppable-preview', dndFile.$droppable);
           var $preview = dndFile.$preview = $('.droppable-preview-image', $previewCnt).last();
           $preview.data('dndFile', dndFile);
@@ -58,7 +60,7 @@ var DnDUploadImage = function ($droppable) {
           $('img', $preview).attr('src', reader.result);
 
           $('.preview-remove', $preview).click(function () {
-            me.dnd.removeFile(dndFile);
+            DnD.removeFile(dndFile);
           });
 
           $preview.fadeIn();

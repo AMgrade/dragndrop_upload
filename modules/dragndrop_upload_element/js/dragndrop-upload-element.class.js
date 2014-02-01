@@ -93,9 +93,9 @@ var DnDUpload = function ($droppable) {
          *
          * @param event
          * @param options
-         * @param form
+         * @param {DnDFormData} dndFormData
          */
-        'dnd:send:options': function (event, options, form) {
+        'dnd:send:options': function (event, options, dndFormData) {
           // Do not call the callback for every droppable area, call it just once.
           if (this.isProcessed(event.type)) {
             return;
@@ -109,19 +109,15 @@ var DnDUpload = function ($droppable) {
           /**
            * Add all input elements to the FormData.
            * Do not include submits and buttons as it will mess up a
-           * 'triggering element' of the form.
+           * 'triggering element' of the FormData.
            *
            * Also do not add file input element as it is empty.
            */
           var not = ['type="submit"', 'type="button"', 'name="' + settings.name + '"'];
-          $('input:not([' + not.join(']):not([') + '])', $formEl).each(function (i, el) {
+          $('input:not([' + not.join(']):not([') + ']),select,textarea', $formEl).each(function (i, el) {
             var $el = $(el);
-            form.append($el.attr('name'), $el.val());
+            dndFormData.append($el.attr('name'), $el.val());
           });
-
-          var $uploadButton = $('#' + settings.uploadButton);
-          form.append('_triggering_element_name', $uploadButton.attr('name'));
-          form.append('_triggering_element_value', $uploadButton.attr('value'));
 
           // Alter options to add Drupal ajax options.
           var ajax = Drupal.ajax[me.dnd.settings.uploadButton];
@@ -135,12 +131,8 @@ var DnDUpload = function ($droppable) {
               drupalAjaxOptions.beforeSerialize(me.dnd.$droppables, options);
               drupalAjaxOptions.beforeSend(xmlhttprequest, options);
 
-              // Transform options.data into FormData.
-              var data = $.extend({}, options.data);
-              options.data = form;
-              $.each(data, function (key, value) {
-                form.append(key, value);
-              });
+              // Put elements from options.data into the DnDFormData.
+              dndFormData.multiAppend(options.data);
             }
           });
         },

@@ -85,9 +85,9 @@
    *
    * @param event
    * @param options
-   * @param form
+   * @param {DnDFormData} dndFormData
    */
-  var sendOptions = function (event, options, form) {
+  var sendOptions = function (event, options, dndFormData) {
     var me = this;
     /**
      * Create a simple Drupal.ajax instance.
@@ -106,17 +106,13 @@
       processData: false,
       beforeSend: function (xmlhttprequest, options) {
         options.data = drupalAjaxOptions.data;
-
+        
         // Call standard Drupal ajax methods.
         drupalAjaxOptions.beforeSerialize(me.$droppables, options);
         drupalAjaxOptions.beforeSend(xmlhttprequest, options);
 
-        // Transform options.data into FormData.
-        var data = $.extend({}, options.data);
-        options.data = form;
-        $.each(data, function (key, value) {
-          form.append(key, value);
-        });
+        // Put elements from options.data into the dndFormData.
+        dndFormData.multiAppend(options.data);
       }
     });
   };

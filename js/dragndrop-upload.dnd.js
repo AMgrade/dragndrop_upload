@@ -15,7 +15,7 @@
  *    Arguments: event, dndFile, index, filesNumber
  *
  *  dnd:addFiles:after
- *    Arguments: event, filesList
+ *    Arguments: event, transFiles
  *
  *  dnd:createPreview
  *    Arguments: dndFile, {FileReader} reader
@@ -36,7 +36,7 @@
  *    Arguments: event
  *
  *  dnd:send:options
- *    Arguments: event, options, form
+ *    Arguments: event, options, {DnDFormData} dndFormData
  *
  *  dnd:send:complete
  *    Arguments: response, status, sentFiles
@@ -484,13 +484,14 @@ function DnD(droppable, settings) {
         return;
       }
 
-      var form = new FormData();
+      // This object will be converted into FormData before sending.
+      var dndFormData = new DnDFormData();
       var sentFiles = [];
 
-      // Append filesList to the form.
+      // Append filesList to the DnDFormData.
       $.each(filesList, function (index, dndFile) {
-        form.append(me.settings.name, dndFile.file);
-        // Add dndFile to the sent array to remove later.
+        dndFormData.append(me.settings.name, dndFile.file, dndFile.file.name);
+        // Add dndFile to the sent array to remove it later.
         sentFiles.push(dndFile);
       });
 
@@ -506,17 +507,15 @@ function DnD(droppable, settings) {
       };
 
       // Give an ability to modify ajax options before sending request.
-      $droppables.trigger('dnd:send:options', [options, form]);
+      $droppables.trigger('dnd:send:options', [options, dndFormData]);
 
       // Override beforeSend callback to set this.sending property to false.
       var beforeSendCallback = options.beforeSend;
       options.beforeSend = function (xmlhttprequest, options) {
         beforeSendCallback(xmlhttprequest, options);
 
-        // Set data here if it hasn't been set before.
-        if (!options.data) {
-          options.data = form;
-        }
+        // Transform DnDFormData into FormData object.
+        options.data = dndFormData.render();
       };
 
       /**

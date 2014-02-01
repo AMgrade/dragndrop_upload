@@ -90,6 +90,7 @@ function dragndrop_upload_dropzone_add($selector, array $settings) {
 
     $path = drupal_get_path('module', 'dragndrop_upload');
     $options = array('group' => JS_LIBRARY);
+    drupal_add_js($path . '/js/dragndrop-upload.formdata.js', $options);
     drupal_add_js($path . '/js/dragndrop-upload.dnd.js', $options);
     drupal_add_js($path . '/js/dragndrop-upload.js');
 

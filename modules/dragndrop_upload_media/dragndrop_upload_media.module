@@ -20,6 +20,11 @@ function dragndrop_upload_media_field_widget_info_alter(&$info) {
       'media_browser' => 0,
     );
   }
+  if (isset($info['dragndrop_upload_video'])) {
+    $info['dragndrop_upload_video']['settings'] += array(
+      'media_browser' => 0,
+    );
+  }
 }
 
 /**
@@ -48,7 +53,7 @@ function dragndrop_upload_file_field_widget_form_alter(&$element, &$form_state, 
   $widget =& $context['instance']['widget'];
   if (in_array(
     $widget['type'],
-    array('dragndrop_upload_file', 'dragndrop_upload_image')
+    array('dragndrop_upload_file', 'dragndrop_upload_image', 'dragndrop_upload_video')
   )
   ) {
     if ($widget['settings']['media_browser']) {

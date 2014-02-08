@@ -1,0 +1,8 @@
+name = Drag & Drop Upload: Video field widget
+description = Provides a drag & drop upload widget for a Video field
+
+core = 7.x
+package = Media
+
+dependencies[] = video
+dependencies[] = dragndrop_upload_file

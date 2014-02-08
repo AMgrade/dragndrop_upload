@@ -108,11 +108,13 @@ function dragndrop_upload_file_field_widget_settings_form($field, $instance) {
       ),
     ),
   );
+
+  // Tell about multiupload availability.
   $_fieldset['multiupload'] = array(
     '#type' => 'checkbox',
     '#title' => t('Allow multiupload'),
-    '#default_value' => module_exists(
-      'dragndrop_upload_multi') ? $settings['multiupload'] : 0,
+    '#default_value' => module_exists('dragndrop_upload_multi') 
+        ? $settings['multiupload'] : 0,
   );
 
   if (!module_exists('dragndrop_upload_multi')) {
@@ -120,6 +122,22 @@ function dragndrop_upload_file_field_widget_settings_form($field, $instance) {
     $_fieldset['multiupload']['#description'] = t(
       'You should enable the module "Drag & Drop Upload: Multiupload support"'
       .' for this setting.'
+    );
+  }
+
+  // Tell about Media browser integration availability.
+  $_fieldset['media_browser'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use Media browser'),
+    '#default_value' => module_exists('dragndrop_upload_media')
+        ? $settings['media_browser'] : 0,
+  );
+  
+  if (!module_exists('dragndrop_upload_media')) {
+    $_fieldset['media_browser']['#disabled'] = TRUE;
+    $_fieldset['media_browser']['#description'] = t(
+      'You should enable the module "Drag & Drop Upload: Media module integration"'
+      . ' for this setting.'
     );
   }
   

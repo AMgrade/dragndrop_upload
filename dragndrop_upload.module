@@ -111,6 +111,7 @@ function dragndrop_upload_dropzone_add($selector, array $settings) {
     'selector' => $selector,
     'validators' => array(),
     'cardinality' => 1,
+    'multiupload' => 0,
     'name' => '',
     'url' => '',
     'errorsInfo' => dragndrop_upload_errors_info(),

@@ -30,8 +30,27 @@ function dragndrop_upload_multi_field_widget_form_alter(&$element, &$form_state,
           $element[$delta]['#value_callback'] = 'mfw_field_widget_value';
           $element[$delta]['#process'][] = 'dragndrop_upload_multi_element_process';
         }
-        $element['#process'] = array('mfw_field_widget_process_multiple');
+        $element['#process'][] = 'mfw_field_widget_process_multiple';
       }
     }
   }
+}
+
+/**
+ * Implements hook_dnd_upload_widget_settings_form_alter().
+ */
+function dragndrop_upload_multi_dnd_upload_widget_settings_form_alter(&$form) {
+  $form['dragndrop_fieldset']['multiupload'] += array(
+    '#description' => t(
+      'Allow multiple files to be uploaded at once.<br/>The setting is'
+      . ' available when field cardinality (Number of values) is greater than 1'
+    ),
+    '#states' => array(
+      'disabled' => array(
+        'select[name="field[cardinality]"]' => array(
+          'value' => 1,
+        ),
+      ),
+    ),
+  );
 }

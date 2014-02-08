@@ -15,7 +15,7 @@ function dragndrop_upload_media_media_browser_plugin_info() {
   $plugins = array();
 
   // Add multiupload plugin if "Multiupload Filefield Widget" exists.
-  if (module_exists('multiupload_filefield_widget')) {
+  if (module_exists('dragndrop_upload_multi')) {
     if (user_access('administer media') || user_access('edit media')) {
       $plugins['mfw_multiupload'] = array(
         '#weight' => -10,

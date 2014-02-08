@@ -155,6 +155,7 @@ function dragndrop_upload_element_element_pre_render($element) {
     'selector' => $selector,
     'settings' => array(
       'name' => $element['upload']['#name'],
+      'multiupload' => $element['#multiupload'],
       'cardinality' => $element['#multiupload'] ? $element['#cardinality'] : 1,
       'validators' => array(
         'maxSize' => parse_size($element['#file_upload_max_size']),

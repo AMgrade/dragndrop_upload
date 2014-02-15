@@ -8,7 +8,7 @@
  * @param {Object} [data]
  */
 function DnDFormData(data) {
-  this.data = {};
+  this.data = [];
   this.multiAppend(data);
 }
 
@@ -38,7 +38,76 @@ function DnDFormData(data) {
         });
       }
     },
-    
+
+    /**
+     * Check if there is a key in DnDFormData.
+     * 
+     * @param key
+     * @returns {*}
+     */
+    has: function (key) {
+      for (var i in this.data) {
+        if (this.data.hasOwnProperty(i)) {
+          if (this.data[i].key == key) {
+            return i;
+          }
+        }  
+      }
+      return -1;
+    },
+
+    /**
+     * Helper function to create data element for DnDFormData.
+     * 
+     * @param key
+     * @param value
+     * @returns {{key: *, value: *}}
+     */
+    el: function (key, value) {    
+      return {
+        key: key,
+        value: value
+      };
+    },
+ 
+    /**
+     * Add value to DnDFormData.
+     *
+     * @param {String} op
+     *    'prepend' or 'append' data to the DnDFormData.
+     * @param {String} key
+     * @param {String|File|Blob} value
+     * @param {String} [name]
+     *    File or Blob name
+     */
+    add: function (op, key, value, name) {
+      if (name) {
+        value = {
+          data: value,
+          name: name
+        };
+      }
+
+      var elIndex = this.has(key);
+      if (elIndex == -1) {
+        if (op == 'prepend') {
+          this.data.splice(0, 0, this.el(key, value));
+        }
+        else {
+          if (op == 'append') {
+            this.data.push(this.el(key, value));
+          }
+        }
+      }
+      else {
+        if (!$.isArray(this.data[elIndex].value)) {
+          this.data[elIndex].value = [this.data[elIndex].value];
+        }
+
+        this.data[elIndex].value.push(value);
+      }
+    },
+
     /**
      * Append value to DnDFormData.
      *
@@ -48,23 +117,19 @@ function DnDFormData(data) {
      *    File or Blob name
      */
     append: function (key, value, name) {
-      if (name) {
-        value = {
-          data: value,
-          name: name
-        };
-      }
+      this.add('append', key, value, name);
+    },
 
-      if (!this.data.hasOwnProperty(key)) {
-        this.data[key] = value;
-      }
-      else {
-        if (!$.isArray(this.data[key])) {
-          this.data[key] = [this.data[key]];
-        }
-
-        this.data[key].push(value);
-      }
+    /**
+     * Prepend value to DnDFormData.
+     *
+     * @param {String} key
+     * @param {String|File|Blob} value
+     * @param {String} [name]
+     *    File or Blob name
+     */
+    prepend: function (key, value, name) {
+      this.add('prepend', key, value, name);
     },
 
     /**
@@ -75,13 +140,14 @@ function DnDFormData(data) {
      * @returns {boolean}
      */
     remove: function (key, index) {
-      if (!this.data.hasOwnProperty(key)) {
+      var elIndex = this.data.has(key);
+      if (elIndex == -1) {
         return false;
       }
       else {
         if (index) {
-          if ($.isArray(this.data[key]) && this.data[key][index]) {
-            this.data[key].splice(index, 1);
+          if ($.isArray(this.data[elIndex].value) && this.data[elIndex].value[index]) {
+            this.data[elIndex].value.splice(index, 1);
             return true;
           }
           else {
@@ -89,7 +155,7 @@ function DnDFormData(data) {
           }
         }
         else {
-          delete this.data[key];
+          delete this.data[elIndex];
           return true;
         }
       }
@@ -105,23 +171,24 @@ function DnDFormData(data) {
      * @see jQuery.map()
      */
     filter: function (callback) {
-      var _map = function (obj) {
-        for (var key in obj) {
-          if (obj.hasOwnProperty(key)) {
-            if ($.isArray(obj[key])) {
-              obj[key] = _map(obj[key], key);
-            }
-            else {
-              if ((obj[key] = callback(obj[key], key)) === null) {
-                delete obj[key];
+      for (var a in this.data) {
+        if (this.data.hasOwnProperty(a)) {
+          if ($.isArray(this.data[a].value)) {
+            for (var b in this.data[a].value) {
+              if (this.data[a].value.hasOwnProperty(b)) {
+                if ((this.data[a][b] = callback(this.data[a].value[b], this.data[a].key)) === null) {
+                  delete this.data[a].value[b];
+                }
               }
-            }            
+            }
+          }
+          else {
+            if ((this.data[a].value = callback(this.data[a].value, this.data[a].key)) === null) {
+              delete this.data[a];
+            }
           }
         }
-        return obj;
-      };
-
-      this.data = _map(this.data);
+      }
     },    
 
     /**
@@ -132,29 +199,30 @@ function DnDFormData(data) {
      * @returns {*}
      */
     getElement: function (key, index) {
-      if (this.data.hasOwnProperty(key)) {
-        if (index) {
-          if ($.isArray(this.data[key]) && this.data[key][index]) {
-            return this.data[key][index];
+      var needle = undefined;
+      $.each(this.data, function (i, el) {
+        if (el.key == key) {
+          if (index) {
+            if ($.isArray(el.value) && el.value[index]) {
+              needle = el.value[index];
+            }
           }
           else {
-            return undefined;
+            needle = el.value;
           }
+          return false;
         }
-        else {
-          return this.data[key];
-        }
-      }
-      else {
-        return undefined;
-      }
+        return true;
+      });
+      
+      return needle;
     },
 
     /**
      * Clear DnDFormData object.
      */
     clear: function () {
-      this.data = {};
+      this.data = [];
     },
 
     /**
@@ -163,24 +231,24 @@ function DnDFormData(data) {
      * @returns {FormData}
      */
     render: function () {
-      var formData = new FormData();
-      $.each(this.data, function (key, value) {
-        if ($.isArray(value)) {
-          $.each(value, function (i, v) {
+      var formData = new FormData();    
+      $.each(this.data, function (i, el) {
+        if ($.isArray(el.value)) {
+          $.each(el.value, function (i, v) {
             if ($.isPlainObject(v)) {
-              formData.append(key, v.data, v.name);
+              formData.append(el.key, v.data, v.name);
             }
             else {
-              formData.append(key, v);
+              formData.append(el.key, v);
             }
           });
         }
         else {
-          if ($.isPlainObject(value)) {
-            formData.append(key, value.data, value.name);
+          if ($.isPlainObject(el.value)) {
+            formData.append(el.key, el.value.data, el.value.name);
           }
           else {
-            formData.append(key, value);
+            formData.append(el.key, el.value);
           }
         }
       });

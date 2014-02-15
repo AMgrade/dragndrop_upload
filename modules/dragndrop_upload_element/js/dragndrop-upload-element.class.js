@@ -48,10 +48,14 @@ var DnDUpload = function ($droppable) {
       // Unbind all mousedown handlers. This is needed to prevent default 
       // event handler to trigger Drupal.ajax request.
       $uploadButton.unbind('mousedown');
-      $uploadButton.bind('mousedown', me.eventsList.uploadBtnMousedown.bind(me));
+
       // Bind fileButtons handlers again, because they were removed.
       $uploadButton.bind('mousedown', Drupal.file.disableFields);
       $uploadButton.bind('mousedown', Drupal.file.progressBar);
+
+      // This handler must be binded after File module handlers because 
+      // 'progressBar' handler adds UPLOAD_IDENTIFIER hidden input
+      $uploadButton.bind('mousedown', me.eventsList.uploadBtnMousedown.bind(me));
 
       /**
        * Attach the change event to the file input element to track and add
@@ -115,8 +119,16 @@ var DnDUpload = function ($droppable) {
            */
           var not = ['type="submit"', 'type="button"', 'name="' + settings.name + '"'];
           $('input:not([' + not.join(']):not([') + ']),select,textarea', $formEl).each(function (i, el) {
-            var $el = $(el);
-            dndFormData.append($el.attr('name'), $el.val());
+            var $el = $(el), name = $el.attr('name');
+            // Upload identifier must be put before files.
+            // @see https://bugs.php.net/bug.php?id=57505
+            var upId = name.match(/^(?:APC_UPLOAD_PROGRESS|UPLOAD_IDENTIFIER)$/);
+            if (upId) {
+              dndFormData.prepend(upId[0], $el.val());
+            }
+            else {
+              dndFormData.append(name, $el.val());
+            }
           });
 
           // Alter options to add Drupal ajax options.

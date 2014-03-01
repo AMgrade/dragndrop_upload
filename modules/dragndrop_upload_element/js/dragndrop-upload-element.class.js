@@ -61,7 +61,11 @@ var DnDUpload = function ($droppable) {
        * Attach the change event to the file input element to track and add
        * to the droppable area files added by the Browse button.
        */
-      $('input[name="' + settings.name + '"]').unbind('change').bind('change', me.eventsList.inputFileChange.bind(me));
+      if($.browser.msie) {
+          $('input[name="' + settings.name + '"]').unbind('input').bind('input', me.eventsList.inputFileChange.bind(me));
+      } else {
+          $('input[name="' + settings.name + '"]').unbind('change').bind('change', me.eventsList.inputFileChange.bind(me));
+      }
 
       me.parent().attachEvents.call(me, $droppables);
     },

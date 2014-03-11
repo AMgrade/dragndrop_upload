@@ -231,24 +231,26 @@ function DnDFormData(data) {
      * @returns {FormData}
      */
     render: function () {
-      var formData = new FormData();    
+      var formData = new FormData();
       $.each(this.data, function (i, el) {
-        if ($.isArray(el.value)) {
-          $.each(el.value, function (i, v) {
-            if ($.isPlainObject(v)) {
-              formData.append(el.key, v.data, v.name);
-            }
-            else {
-              formData.append(el.key, v);
-            }
-          });
-        }
-        else {
-          if ($.isPlainObject(el.value)) {
-            formData.append(el.key, el.value.data, el.value.name);
+        if (el != undefined) {
+          if ($.isArray(el.value)) {
+            $.each(el.value, function (i, v) {
+              if ($.isPlainObject(v)) {
+                formData.append(el.key, v.data, v.name);
+              }
+              else {
+                formData.append(el.key, v);
+              }
+            });
           }
           else {
-            formData.append(el.key, el.value);
+            if ($.isPlainObject(el.value)) {
+              formData.append(el.key, el.value.data, el.value.name);
+            }
+            else {
+              formData.append(el.key, el.value);
+            }
           }
         }
       });

@@ -128,14 +128,17 @@ var DnDUpload = function ($droppable) {
           var not = ['type="submit"', 'type="button"', 'name="' + settings.name + '"'];
           $('input:not([' + not.join(']):not([') + ']),select,textarea', $formEl).each(function (i, el) {
             var $el = $(el), name = $el.attr('name');
-            // Upload identifier must be put before files.
-            // @see https://bugs.php.net/bug.php?id=57505
-            var upId = name.match(/^(?:APC_UPLOAD_PROGRESS|UPLOAD_IDENTIFIER)$/);
-            if (upId) {
-              dndFormData.prepend(upId[0], $el.val());
-            }
-            else {
-              dndFormData.append(name, $el.val());
+            // Some form elements do not contain "name" attribute. 
+            if (name) {
+              // Upload identifier must be put before files.
+              // @see https://bugs.php.net/bug.php?id=57505
+              var upId = name.match(/^(?:APC_UPLOAD_PROGRESS|UPLOAD_IDENTIFIER)$/);
+              if (upId) {
+                dndFormData.prepend(upId[0], $el.val());
+              }
+              else {
+                dndFormData.append(name, $el.val());
+              }
             }
           });
 

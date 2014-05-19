@@ -41,7 +41,7 @@ function dragndrop_upload_image_field_widget_settings_form($field, $instance) {
   // Unset 'progress_indicator', as it will be added
   // in dragndrop_upload_file_field_widget_settings_form().
   unset($form['progress_indicator']);
-  
+
   $form = array_merge_recursive(
     $form,
     dragndrop_upload_file_field_widget_settings_form($field, $instance)
@@ -190,4 +190,22 @@ function dragndrop_upload_image_pre_render($element) {
   );
 
   return $element;
+}
+
+/**
+ * Implementation of hook_insert_widgets()
+ * - Provides integration support for the 'Insert' module
+ */
+function dragndrop_upload_image_insert_widgets() {
+  return array(
+    'dragndrop_upload_image' => array(
+      'element_type' => 'dragndrop_upload',
+      'wrapper' => '.image-widget',
+      'fields' => array(
+        'alt' => 'input[name$="[alt]"], textarea[name$="[alt]"]',
+        'title' => 'input[name$="[title]"], textarea[name$="[title]"]',
+        'description' => 'input[name$="[description]"], textarea[name$="[description]"]',
+      ),
+    ),
+  );
 }

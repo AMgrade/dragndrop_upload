@@ -234,9 +234,6 @@ function DnDFormData(data) {
       var formData = new FormData();
       $.each(this.data, function (i, el) {
         if (el != undefined) {
-          if ((el.key.slice(-2) === '[]') && (el.value == null)) {
-            el.value = '_none';
-          }
           if ($.isArray(el.value)) {
             $.each(el.value, function (i, v) {
               if ($.isPlainObject(v)) {

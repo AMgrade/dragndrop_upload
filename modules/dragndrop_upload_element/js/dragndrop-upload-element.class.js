@@ -45,7 +45,7 @@ var DnDUpload = function ($droppable) {
       $(settings.browseButton).bind('click', me.eventsList.browseButtonClick.bind(me));
 
       var $uploadButton = $('#' + settings.uploadButton);
-      // Unbind all mousedown handlers. This is needed to prevent default 
+      // Unbind all mousedown handlers. This is needed to prevent default
       // event handler to trigger Drupal.ajax request.
       $uploadButton.unbind('mousedown');
 
@@ -53,7 +53,7 @@ var DnDUpload = function ($droppable) {
       $uploadButton.bind('mousedown', Drupal.file.disableFields);
       $uploadButton.bind('mousedown', Drupal.file.progressBar);
 
-      // This handler must be binded after File module handlers because 
+      // This handler must be binded after File module handlers because
       // 'progressBar' handler adds UPLOAD_IDENTIFIER hidden input
       $uploadButton.bind('mousedown', me.eventsList.uploadBtnMousedown.bind(me));
 
@@ -61,7 +61,7 @@ var DnDUpload = function ($droppable) {
        * Attach the change event to the file input element to track and add
        * to the droppable area files added by the Browse button.
        */
-        
+
       // TODO: test in IE 11. Check if jQuery v.1.5 has already resolved the issue.
       var changeEvent = 'change';
       // IE 10 does not support 'change' event on input file elements.
@@ -118,26 +118,18 @@ var DnDUpload = function ($droppable) {
           var settings = this.dnd.settings;
           var $formEl = $(settings.selector).closest('form');
 
-          /**
-           * Add all input elements to the FormData.
-           * Do not include submits and buttons as it will mess up a
-           * 'triggering element' of the FormData.
-           *
-           * Also do not add file input element as it is empty.
-           */
-          var not = ['type="submit"', 'type="button"', 'name="' + settings.name + '"'];
-          $('input:not([' + not.join(']):not([') + ']),select,textarea', $formEl).each(function (i, el) {
-            var $el = $(el), name = $el.attr('name');
-            // Some form elements do not contain "name" attribute. 
-            if (name) {
+          // Add form values to the FormData.
+          $.each($formEl.formToArray(false, []), function (i, el) {
+            // Do not add file input element as it is empty.
+            if (el.name != settings.name) {
               // Upload identifier must be put before files.
               // @see https://bugs.php.net/bug.php?id=57505
-              var upId = name.match(/^(?:APC_UPLOAD_PROGRESS|UPLOAD_IDENTIFIER)$/);
+              var upId = el.name.match(/^(?:APC_UPLOAD_PROGRESS|UPLOAD_IDENTIFIER)$/);
               if (upId) {
-                dndFormData.prepend(upId[0], $el.val());
+                dndFormData.prepend(upId[0], el.value);
               }
               else {
-                dndFormData.append(name, $el.val());
+                dndFormData.append(el.name, el.value);
               }
             }
           });

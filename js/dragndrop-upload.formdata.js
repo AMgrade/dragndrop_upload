@@ -1,8 +1,8 @@
 /**
  * @file
  * Contains DnDFormData class.
- * 
- * This is a wrapper for FormData class designed to allow filtering 
+ *
+ * This is a wrapper for FormData class designed to allow filtering
  * and removing of appended elements.
  *
  * @param {Object} [data]
@@ -17,7 +17,7 @@ function DnDFormData(data) {
 
     /**
      * Clear current data object and fill it with new data.
-     * 
+     *
      * @param data
      */
     hydrate: function (data) {
@@ -27,7 +27,7 @@ function DnDFormData(data) {
 
     /**
      * Append to DnDFormData multiple elements at once.
-     * 
+     *
      * @param data
      */
     multiAppend: function (data) {
@@ -41,7 +41,7 @@ function DnDFormData(data) {
 
     /**
      * Check if there is a key in DnDFormData.
-     * 
+     *
      * @param key
      * @returns {*}
      */
@@ -51,25 +51,25 @@ function DnDFormData(data) {
           if (this.data[i].key == key) {
             return i;
           }
-        }  
+        }
       }
       return -1;
     },
 
     /**
      * Helper function to create data element for DnDFormData.
-     * 
+     *
      * @param key
      * @param value
      * @returns {{key: *, value: *}}
      */
-    el: function (key, value) {    
+    el: function (key, value) {
       return {
         key: key,
         value: value
       };
     },
- 
+
     /**
      * Add value to DnDFormData.
      *
@@ -134,7 +134,7 @@ function DnDFormData(data) {
 
     /**
      * Remove element from DnDFormData.
-     * 
+     *
      * @param key
      * @param index
      * @returns {boolean}
@@ -163,7 +163,7 @@ function DnDFormData(data) {
 
     /**
      * Filter current values of DnDFormData.
-     * 
+     *
      * @param {Function} callback
      *    function (value, key) {
      *      // ...
@@ -189,11 +189,11 @@ function DnDFormData(data) {
           }
         }
       }
-    },    
+    },
 
     /**
      * Get element from DnDFormData.
-     * 
+     *
      * @param {String }key
      * @param {Number} index
      * @returns {*}
@@ -214,7 +214,7 @@ function DnDFormData(data) {
         }
         return true;
       });
-      
+
       return needle;
     },
 
@@ -227,13 +227,16 @@ function DnDFormData(data) {
 
     /**
      * Render DnDFormData object.
-     * 
+     *
      * @returns {FormData}
      */
     render: function () {
       var formData = new FormData();
       $.each(this.data, function (i, el) {
         if (el != undefined) {
+          if ((el.key.slice(-2) === '[]') && (el.value == null)) {
+            el.value = '_none';
+          }
           if ($.isArray(el.value)) {
             $.each(el.value, function (i, v) {
               if ($.isPlainObject(v)) {

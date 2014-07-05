@@ -37,7 +37,7 @@ function dragndrop_upload_file_field_widget_info() {
  */
 function dragndrop_upload_file_field_widget_settings_form($field, $instance) {
   $form = file_field_widget_settings_form($field, $instance);
-  
+
   $widget = $instance['widget'];
   $settings = $widget['settings'];
 
@@ -113,7 +113,7 @@ function dragndrop_upload_file_field_widget_settings_form($field, $instance) {
   $_fieldset['multiupload'] = array(
     '#type' => 'checkbox',
     '#title' => t('Allow multiupload'),
-    '#default_value' => module_exists('dragndrop_upload_multi') 
+    '#default_value' => module_exists('dragndrop_upload_multi')
         ? $settings['multiupload'] : 0,
   );
 
@@ -132,7 +132,7 @@ function dragndrop_upload_file_field_widget_settings_form($field, $instance) {
     '#default_value' => module_exists('dragndrop_upload_media')
         ? $settings['media_browser'] : 0,
   );
-  
+
   if (!module_exists('dragndrop_upload_media')) {
     $_fieldset['media_browser']['#disabled'] = TRUE;
     $_fieldset['media_browser']['#description'] = t(
@@ -140,7 +140,7 @@ function dragndrop_upload_file_field_widget_settings_form($field, $instance) {
       . ' for this setting.'
     );
   }
-  
+
   drupal_alter('dnd_upload_widget_settings_form', $form, $field, $instance);
   return $form;
 }
@@ -198,8 +198,8 @@ function dragndrop_upload_file_field_widget_form(&$form, &$form_state, $field, $
     '#upload_event' => $widget_settings['upload_event'],
     '#standard_upload' => $widget_settings['standard_upload'],
     '#allow_replace' => $widget_settings['allow_replace'],
-    '#upload_button_text' => $widget_settings['upload_button_text'],
-    '#droppable_area_text' => $widget_settings['droppable_area_text'],
+    '#upload_button_text' => t($widget_settings['upload_button_text']),
+    '#droppable_area_text' => t($widget_settings['droppable_area_text']),
     '#file_upload_max_size' => $instance_settings['max_filesize'] ? $instance_settings['max_filesize'] : file_upload_max_size(),
     '#cardinality' => $field['cardinality'],
     // Do not allow for 'multiupload' setting to be enabled if the module
@@ -239,7 +239,7 @@ function dragndrop_upload_file_field_widget_form(&$form, &$form_state, $field, $
     if ($field['cardinality'] != -1) {
       $elements[$delta]['#cardinality'] -= $delta;
     }
-    
+
     // Enable access to next element if needed.
     if (($field['cardinality'] == FIELD_CARDINALITY_UNLIMITED || $delta < $field['cardinality']) && empty($form_state['programmed'])) {
       $elements[$delta]['#access'] = TRUE;

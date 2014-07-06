@@ -139,17 +139,6 @@ function dragndrop_upload_element_element_pre_render($element) {
     return $element;
   }
 
-  $file_validate_extensions = '';
-  if (!empty($element['#upload_validators']['file_validate_extensions'])) {
-    $file_validate_extensions = preg_split(
-      '/ +/',
-      implode(
-        ' ',
-        $element['#upload_validators']['file_validate_extensions']
-      )
-    );
-  }
-
   $selector = '#' . $element['droppable_area']['#dnd_id'];
   $element['#attached']['dragndrop_upload'][] = array(
     'selector' => $selector,
@@ -157,10 +146,7 @@ function dragndrop_upload_element_element_pre_render($element) {
       'name' => $element['upload']['#name'],
       'multiupload' => $element['#multiupload'],
       'cardinality' => $element['#multiupload'] ? $element['#cardinality'] : 1,
-      'validators' => array(
-        'maxSize' => parse_size($element['#file_upload_max_size']),
-        'extensions' => $file_validate_extensions,
-      ),
+      'validators' => $element['#upload_validators'],
       'uploadButton' => $element['upload_button']['#id'],
       'browseButton' => $selector . ':parent .droppable-browse-button',
       'allowReplace' => $element['#allow_replace'],

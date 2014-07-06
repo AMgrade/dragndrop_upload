@@ -83,18 +83,11 @@ function DnD(droppable, settings) {
 
       // Add default validators.
       var validators = me.settings.validators || {};
-      if (validators.maxSize) {
-        $droppables.bind('dnd:validateFile', me.validatorsList.fileSize.bind(me));
-      }
-
-      if (validators.extensions) {
-        // Make extensions lowercase.
-        validators.extensions = $.map(validators.extensions, function (item) {
-          return item.toLowerCase();
-        });
-
-        $droppables.bind('dnd:validateFile', me.validatorsList.fileExt.bind(me));
-      }
+      $.each(validators, function (name) {
+        if (me.validatorsList[name]) {
+          $droppables.bind('dnd:validateFile', me.validatorsList[name].bind(me));
+        }
+      });
 
       if (me.settings.cardinality != -1) {
         $droppables.bind('dnd:validateFile', me.validatorsList.filesNum.bind(me));
@@ -179,9 +172,11 @@ function DnD(droppable, settings) {
     },
 
     validatorsList: {
-      fileSize: function (event, dndFile) {
+      'file_validate_size': function (event, dndFile) {
         var settings = this.settings;
-        if (dndFile.file.size > settings.validators.maxSize) {
+        var maxSize = settings.validators.file_validate_size[0] + '';
+
+        if (dndFile.file.size > maxSize) {
           dndFile.error = {
             type: 'fileSize',
             args: {
@@ -192,12 +187,14 @@ function DnD(droppable, settings) {
         }
       },
 
-      fileExt: function (event, dndFile) {
+      'file_validate_extensions': function (event, dndFile) {
         var settings = this.settings;
         var ext = dndFile.file.name.split('.').pop().toLowerCase();
         var isValid = false;
 
-        $.each(settings.validators.extensions, function (index, allowedExt) {
+        var extList = settings.validators
+          .file_validate_extensions[0].toLowerCase().split(/\s+/);
+        $.each(extList, function (index, allowedExt) {
           if (allowedExt == ext) {
             isValid = true;
             return false;
@@ -210,7 +207,7 @@ function DnD(droppable, settings) {
             type: 'fileExt',
             args: {
               '@filename': dndFile.file.name,
-              '@allowed': settings.validators.extensions.join(','),
+              '@allowed': extList.join(','),
               '@ext': ext
             }
           };
@@ -547,7 +544,7 @@ function DnD(droppable, settings) {
 
     /**
      * Get object event handlers.
-     * 
+     *
      * @param $obj
      * @param [eventName]
      *    Event name to return.
@@ -567,7 +564,7 @@ function DnD(droppable, settings) {
       if (events[eventName]) {
         event = $.extend({}, events[eventName]);
       }
-      
+
       return eventName ? event : events;
     }
   };

@@ -61,13 +61,10 @@ var DnDUpload = function ($droppable) {
        * Attach the change event to the file input element to track and add
        * to the droppable area files added by the Browse button.
        */
-
-      // TODO: test in IE 11. Check if jQuery v.1.5 has already resolved the issue.
       var changeEvent = 'change';
-      // IE 10 does not support 'change' event on input file elements.
-      if ($.browser.msie && $.browser.version <= 10) {
-        changeEvent = 'input';
-      }
+      // IE 10 does not support 'change' event on input file elements,
+      // use 'input' event additionally.
+      changeEvent += ' input';
       $('input[name="' + settings.name + '"]').unbind(changeEvent)
         .bind(changeEvent, me.eventsList.inputFileChange.bind(me));
 

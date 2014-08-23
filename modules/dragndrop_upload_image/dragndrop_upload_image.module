@@ -209,3 +209,23 @@ function dragndrop_upload_image_insert_widgets() {
     ),
   );
 }
+
+/**
+ * Implements hook_focal_point_supported_widget_types_alter().
+ *
+ * Adds integration with module Focal Point.
+ */
+function dragndrop_upload_image_focal_point_supported_widget_types_alter(&$supported) {
+  $supported[] = 'dragndrop_upload_image';
+}
+
+/**
+ * Process callback of dragndrop_upload_image widget for Focal Point module.
+ *
+ * Adds integration with module Focal Point.
+ *
+ * @see focal_point_field_widget_form_alter().
+ */
+function focal_point_widget_dragndrop_upload_image_process($element, &$form_state, $form) {
+  return focal_point_widget_image_image_process($element, $form_state, $form);
+}

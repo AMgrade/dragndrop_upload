@@ -41,7 +41,9 @@ var DnDUpload = function ($droppable) {
 
       /**
        * Add handler for Browse button.
+       * Clear previously declared handlers because it gets applied twice with ajax updates.
        */
+      $(settings.browseButton).unbind('click');
       $(settings.browseButton).bind('click', me.eventsList.browseButtonClick.bind(me));
 
       var $uploadButton = $('#' + settings.uploadButton);
